@@ -1,4 +1,5 @@
-# Quantitative Genomics and Genetics 2016 Spring
+Quantitative Genomics and Genetics 2016 Spring
+------
 
 ## Computer Lab Material 
 
