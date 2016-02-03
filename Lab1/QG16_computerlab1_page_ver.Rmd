@@ -12,6 +12,30 @@ Computer Lab 1
 
 -- Author: Jin Hyun Ju (jj328@cornell.edu)
 
+**Best way to download computer lab material**
+
+- Mac and Linux users 
+
+Open a terminal, change directories to your preferred location, and type the following command.
+
+```{r, eval = FALSE}
+git clone https://github.com/jinhyunju/QG16_computerlab.git
+```
+
+After the initial "cloning" of the repository, you can use this command (while you are in the directory) to download any future updates.
+
+```{r, eval = FALSE}
+git pull
+```
+
+- Windows users 
+
+Download git
+
+https://git-scm.com/downloads
+
+Use either the git bash functionality and type the same command shown above, or use the GUI version and copy and paste the URL to clone the repository.
+
 **Installing R**
 
 The Comprehensive R Archive Network (CRAN)
@@ -93,9 +117,11 @@ http://www.rstudio.com/
 - Your program or script will almost certainly never work on the first run. If it does work, it is probably not doing the right thing.
 
 
-### 1. Figuring out where the computer is doing the work : Working Directories
+### 1. Location, Location, Location ...
 
 ---------------
+
+#### The working directory
 
 - The "working directory" is where R automatically looks for your data files and saves any outputs.
 
@@ -264,12 +290,12 @@ class(example.vector2)
 
 - Now, what class would this vector be?
 
-```{r, comment=NA}
+```{r, comment=NA, eval = FALSE}
 question1 <- "1"
 ```
 
 - Anything written between "" will be considered as characters.
-\
+
 
 
 #### 2. Matrices
@@ -328,7 +354,6 @@ example.matrix4
 
 - **An important feature of vectors and matrices is that they can only hold one type of data. So a numerical matrix will only be allowed to hold numerical values, and a character matrix will only hold characters. When R complains that it cannot compute on a matrix, check the type!**
 
-
 ```{r, comment=NA}
 character.matrix <- matrix(c("a","b","c","d","e","f"), nrow = 2, ncol = 3, byrow=TRUE)
 character.matrix
@@ -337,6 +362,23 @@ mode(example.matrix4)
 mode(character.matrix)
 ```
 
+- Can you tell me what the results for the following code will be?
+
+```{r, comment=NA, eval = FALSE}
+question2 <- matrix(c(1,2,3), nrow = 2, ncol = 3, byrow = TRUE)
+
+question3 <- matrix(c(1,2,3,4), nrow = 2, ncol = 3, byrow = TRUE)
+```
+
+- These examples show you how R recycles values if the dimensions differ. This feature comes in handy sometimes, but it mostly backfires since it happens automatically even in cases where we would rather see an error.
+
+- Now what will happen in this case?
+
+```{r, comment=NA, eval = FALSE}
+question4 <- matrix(c(1,2,Three), nrow = 2, ncol = 3, byrow = TRUE)
+
+question5 <- matrix(c(1,2,"Three"), nrow = 2, ncol = 3, byrow = TRUE)
+```
 
 #### 3. Dataframes
 
@@ -347,7 +389,8 @@ mode(character.matrix)
 numbers <- c(1:4)
 characters <- c("a","b","c","d")
 
-example.data.frame <- data.frame(numbers,characters)
+# The stringsAsFactors option prevents converting strings to factors
+example.data.frame <- data.frame(numbers,characters, stringsAsFactors = FALSE)
 example.data.frame
 
 class(example.data.frame[,1])
@@ -373,6 +416,14 @@ example.data.frame[1,1]
 example.data.frame[2,]
 example.data.frame$numbers
 
+```
+
+- How will this affect the column types in the data frame?
+
+```{r, comment = NA, eval = FALSE}
+example.data.frame[1,] <- c(5,5)
+
+example.data.frame[1,] <- c("e", "e")
 ```
 
 #### 4. Lists
@@ -411,6 +462,9 @@ example.list[[1]][2]
 example.list[[2]][,1]
 example.list$place3[,1]
 ```
+
+
+#### Quick Note
 
 - In case you cannot remember which variables you declared, use the ls() function
 
