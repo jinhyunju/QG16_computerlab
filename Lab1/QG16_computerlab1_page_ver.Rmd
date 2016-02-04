@@ -52,17 +52,15 @@ http://www.rstudio.com/
 
 - R is a programming language: A set of commands in a syntax that can be interpreted by a computer to make use of the processors to do computations. A way to tell the computer what to do.
 
-- R is a "scripting" type languate: The syntax is interpreted directly to do computations and much of the complex tasks one would like to accomplish are implemented automatically.
+- R is a "scripting" type language: The syntax is interpreted directly to do computations and much of the complex tasks one would like to accomplish are implemented automatically.
 
 - R is specifically developed for doing statistical tasks and computations.
 
-- History: R is an open-source (free) spin-off of the language S+, originally developed at the Bell labs in the 70's. The R system is written in C.
-
-- Relationship to other languates: R is distinct from object-oriented languages (such as C), other dynamic scripting languages (Perl), has similar functionality to SAS and is (effectively) a free version of S.
-
 **What is R studio?**
 
-- User friendly interface for R. Makes your life a lot easier. 
+User friendly interface for R. Makes your life a lot easier. 
+
+Key features:
 
 - Syntax highlighting
 
@@ -77,6 +75,8 @@ http://www.rstudio.com/
 - Visualizing object structures
 
 - When you run Rstudio it automatically opens an R session
+
+- Now even including git functionality
 
 **Why R?**
 
@@ -232,7 +232,7 @@ number.of.females
 
 - By default R is saving variables in the form of vectors, which are sequences of numbers.
 
-- There are many many many ways to create a from scratch vector. Here are a few examples 
+- There are many many many ways to create a vector from scratch. Here are a few examples 
 
 ```{r, comment=NA}
 example.vector <- c(1.1,3,5.3,7,9.0)
@@ -352,7 +352,7 @@ example.matrix4
 
 - Just like vectors matrices can also hold characters
 
-- **An important feature of vectors and matrices is that they can only hold one type of data. So a numerical matrix will only be allowed to hold numerical values, and a character matrix will only hold characters. When R complains that it cannot compute on a matrix, check the type!**
+- **An important feature of vectors and matrices is that they can only hold one type of data. So a numerical matrix will only be allowed to hold numerical values, and a character matrix will only hold characters. When R complains that it cannot compute using a matrix, check the type!**
 
 ```{r, comment=NA}
 character.matrix <- matrix(c("a","b","c","d","e","f"), nrow = 2, ncol = 3, byrow=TRUE)
@@ -466,7 +466,7 @@ example.list$place3[,1]
 
 #### Quick Note
 
-- In case you cannot remember which variables you declared, use the ls() function
+- In case you cannot remember which variables you have declared, use the ls() function
 
 ```{r, comment=NA}
 ls()
@@ -495,7 +495,7 @@ ls()
 - First, open the file using your text editor (not excel!) and look what's inside.
 
 ```{r, comment=NA}
-QG16.lab.1 <- read.table("./QG16-lab1-data.csv", sep = ",", header = T)
+QG16.lab.1 <- read.table("./QG16-lab1-data.csv", sep = ",", header = TRUE)
 QG16.lab.2 <- read.csv("./QG16-lab1-data.csv", header = TRUE)
 
 ```
