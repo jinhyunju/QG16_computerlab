@@ -10,5 +10,5 @@ Quantitative Genomics and Genetics 2016 Spring
 
 ### Lab 2 - Functions and Vector/Matrix calculations 
 
-* [Slides](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab2/QG16_computerlab2_page_ver.html "Lab1")
+* [Slides](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab2/QG16_computerlab2.html "Lab1")
 
