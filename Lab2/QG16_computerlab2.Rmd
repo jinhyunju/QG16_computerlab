@@ -1,0 +1,235 @@
+---
+author: "Jinhyun Ju"
+output: html_document
+---
+
+Quantitative Genomics and Genetics 2016
+======
+
+Computer Lab 2
+------
+-- 11 February 2016
+
+-- Author: Jin Hyun Ju (jj328@cornell.edu)
+
+
+### [Review] Don't forget to set your working directory
+
+```{r, comment=NA, eval = FALSE}
+getwd() # check current working directory 
+
+setwd("./") # set working directory
+
+dir()    # check what is in your directory
+
+dir.create("./test_dir") # In case you forgot to create a directory
+
+```
+
+### [Review] Reading and writing data
+
+```{r, comment=NA}
+QG16.lab.2 <- read.table("../Lab1/QG16-lab1-data.csv", sep = ",", header = TRUE) # Reading data from a csv file
+
+QG16.lab.2.only.a <- subset(QG16.lab.2, factor1 == "a") # subsetting a data frame
+```
+
+```{r, comment=NA, eval = FALSE}
+write.table(QG16.lab.2.only.a, file = "./QG16_subset_only_a.csv", sep = ",", quote= FALSE, row.names=FALSE)
+# the quote options remove the "" of the entries. try it with quote = TRUE and see how it is different.
+# row.names = FALSE eliminates the numbers in front of each row
+```
+
+### 1. Concept of functions
+
+- Every expression in R with parentheses "( )" is a function.
+
+- We learned that a function is something that takes in an input and gives you an output.
+
+- The input for an R function is anything written between "( )" of a function, and the output(s) the result running the function.
+
+- R has many built in functions for commonly used methods in statistics.
+
+```{r, comment=NA}
+# Examples of built in functions 
+example.vector1 <- c(5,2,3,7,1,1,2,9,9)
+
+# a function that calculates the mean
+mean(example.vector1) 
+
+# a function that summarizes the counts
+table(QG16.lab.2$factor1) 
+
+```
+
+- We can also build custom functions. 
+
+```{r, comment=NA}
+# the syntax for declaring functions, note the {} after function()
+
+log10_add <- function(input1,input2){   # all the inputs are specified within the ( )
+  cat("This is a custom function \n")   
+  cat("The inputs are = ",input1,input2,"\n")  # showing you the inputs 
+  output <- log10(input1) + log10(input2)       # creating an output within the function
+  cat("The output is = ",output,"\n")          # print the output
+  return(output)                               # return specifies the output
+}
+
+# Now we can call our custom functions like this
+log10_add(100,1000)
+
+# Note that the variable output is not created in our workspace 
+ls()
+
+# in order to save the result of a function to a variable we have to assign it to a variable
+test.output <- log10_add(100,1000)
+test.output
+```
+
+- We can also load functions from published packages if somebody else did the hard work for us.
+
+- Let's see what happens if we try to run a function called mutate().
+
+```{r, comment = NA, eval = FALSE}
+
+mutate()
+
+```
+
+- The mutate function is part of the "dplyr" package, so we need to install it first to be able to use the function. 
+
+```{r,comment=NA, eval = FALSE}
+# We can install packages that are published on CRAN by using this function
+
+install.packages("dplyr") # in this case we are installing a package called "dplyr"
+
+# you will need an internet connection to install a package using this function
+```
+
+- So, does it work now since we have it installed?
+
+```{r, comment= NA, eval = FALSE}
+mutate(QG16.lab.2,mean = (data1+data2+data3)/3)
+```
+
+- Having the package installed does not mean you can use the function. You have to load the package into your current R session in order to use it. 
+
+```{r, comment = NA}
+# Once the installation is finished you can load the functions into the workspace 
+library(dplyr)
+# or by 
+require(dplyr)
+
+# Now we can use the functions from dplyr
+QG16.lab.2 <- mutate(QG16.lab.2,mean = (data1+data2+data3)/3)
+head(QG16.lab.2)
+
+# Let's try another function from dplyr
+filter(QG16.lab.2,factor1 == "b" & factor2 =="info8") # Note the & operator which is an AND operator
+
+```
+
+### 2. Vector and Matrix calculations
+
+- If you want to modify each element of a vector by a scalar value you can use the math operations that we have learned last week.
+
+```{r, comment = NA}
+example.vector1
+2 * example.vector1
+1 + example.vector1
+example.vector1 ^2
+
+```
+
+- If you are interested in the dot product of two vectors you have to use a special operator
+
+```{r, comment=NA}
+example.vector1 %*% example.vector1
+```
+
+- The same applies for matrices 
+
+```{r, comment= NA}
+
+example.matrix1 <- matrix(c(1,1,1,2,2,2), nrow = 2, ncol = 3, byrow= TRUE)
+
+2 * example.matrix1
+
+example.matrix1 ^2
+
+example.matrix1 - 1
+```
+
+- Here is how you can do matrix calculations
+
+```{r, comment = NA}
+# t() is transposing the matrix
+example.matrix1 %*% t(example.matrix1)
+# Note the dimensions 2 x 3 %*% 3 x 2  = 2 x 2 
+```
+
+- Here are some useful functions that can be used in matrix calculations 
+
+```{r, comment = NA}
+# creating a diagonal matrix with the first input as values on the diagonal
+diag(2,nrow = 3)
+diag(example.vector1)
+
+# calculating the inverse of a matrix
+A <- matrix(c(2,-3,1,0.5),nrow = 2)
+solve(A)
+
+# we can check this by 
+A %*% solve(A) # which results in an identity matrix 
+
+```
+
+
+### Advanced Challenge
+
+- Can you generate a function that takes a vector with student names with "Weill Cornell" grades as input, and creates a list as an output that has the following entries?
+
+- "LetterGrade" should have the converted letter grades of each student in it.
+
+- "Overview" should have the number of students for each Letter grades
+
+- There should be an entry for each letter grade with name of students that received the corresponding letter grade.
+
+```{r, comment = NA}
+
+scores <- sample(c("NP","P","LP","HP","H"), 20, replace = TRUE)
+names(scores) <- paste0("student", 1:length(scores))
+
+standard_letter_grades <- c("H" = "A", "HP" = "B", "LP" = "C", "P" = "D", "NP" = "F")
+
+```
+
+- Your code should also work when the conversion table changes (no hard coding of letter grades are allowed!)
+
+- Your function should also be verbose, meaning that it should tell the user how many students are in the input in total, and the breakdown for each grade as well.
+
+- Example output
+
+```{r, comment = NA, echo = FALSE}
+lab2_challenge <- function(input_scores, conversion_table){
+  
+  cat("Total number of students = ", length(input_scores), "\n")
+  
+  student_letter_grade <- unname(conversion_table[input_scores])
+  names(student_letter_grade) <- names(input_scores)
+  
+  overview <- table(student_letter_grade)
+  
+  output_list <- list()
+  output_list[["Overview"]] <- overview
+  output_list[["LetterGrade"]] <- student_letter_grade
+  for(grade in unique(conversion_table)){
+    output_list[[grade]] <- names(student_letter_grade[student_letter_grade == grade]  )
+    cat(length(output_list[[grade]]), "students received a letter grade", grade, "\n")
+  }
+  return(output_list)
+}
+
+lab2_challenge(scores, standard_letter_grades)
+
+```
