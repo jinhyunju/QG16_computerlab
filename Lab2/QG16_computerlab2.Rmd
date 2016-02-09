@@ -129,6 +129,12 @@ filter(QG16.lab.2,factor1 == "b" & factor2 =="info8") # Note the & operator whic
 
 ```
 
+- At this point you might be wondering why we need to install all those packages and load them? Shouldn't it be less complicated if we just have all these functions by default, or automatically loaded onto the workspace after installing? 
+
+- The reason we use the library() or require() function to load specific packages is because it will slow down R if we loaded everything we have installed at the beginning as we install more packages.
+
+- You can think of your R session as your workbench, and the packages as specific tools in your toolbox. You wouldn't empty out the toolbox onto your workbench for a simple task like sanding a surface. The only thing you need is some sandpaper, and any additional tool just occupies additional space and contributes only to the aesthetics of your workspace (or acts against it).
+
 ### 2. Vector and Matrix calculations
 
 - If you want to modify each element of a vector by a scalar value you can use the math operations that we have learned last week.
@@ -187,6 +193,8 @@ A %*% solve(A) # which results in an identity matrix
 
 ### Advanced Challenge
 
+**This challenge goes beyond the scope of what we have learned so far, so don't panic if you cannot figure it out based on the 2 labs**
+
 - Can you generate a function that takes a vector with student names with "Weill Cornell" grades as input, and creates a list as an output that has the following entries?
 
 - "LetterGrade" should have the converted letter grades of each student in it.
@@ -207,6 +215,29 @@ standard_letter_grades <- c("H" = "A", "HP" = "B", "LP" = "C", "P" = "D", "NP" =
 - Your code should also work when the conversion table changes (no hard coding of letter grades are allowed!)
 
 - Your function should also be verbose, meaning that it should tell the user how many students are in the input in total, and the breakdown for each grade as well.
+
+**Hints**
+
+- Syntax of for loops and printing in R (will be covered in the next lab)
+
+```{r, comment =NA, eval = FALSE}
+for ( i in 1:N){
+    cat("Processing loop number = ",i,"\n")
+}
+```
+
+- Getting names of vectors 
+
+```{r, comment =NA, eval = FALSE}
+names(example.vector1)
+```
+
+- Checking if value is equal to something
+
+```{r, comment =NA, eval = FALSE}
+value == 1
+value == "A"
+```
 
 - Example output
 

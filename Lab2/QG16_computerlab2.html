@@ -82,9 +82,8 @@ dir.create(&quot;./test_dir&quot;) # In case you forgot to create a directory</c
 <h3>[Review] Reading and writing data</h3>
 <pre class="r"><code>QG16.lab.2 &lt;- read.table(&quot;../Lab1/QG16-lab1-data.csv&quot;, sep = &quot;,&quot;, header = TRUE) # Reading data from a csv file
 
-QG16.lab.2.only.a &lt;- subset(QG16.lab.2, factor1 == &quot;a&quot;) # subsetting a data frame
-
-write.table(QG16.lab.2.only.a, file = &quot;./QG16_subset_only_a.csv&quot;, sep = &quot;,&quot;, quote= FALSE, row.names=FALSE)
+QG16.lab.2.only.a &lt;- subset(QG16.lab.2, factor1 == &quot;a&quot;) # subsetting a data frame</code></pre>
+<pre class="r"><code>write.table(QG16.lab.2.only.a, file = &quot;./QG16_subset_only_a.csv&quot;, sep = &quot;,&quot;, quote= FALSE, row.names=FALSE)
 # the quote options remove the &quot;&quot; of the entries. try it with quote = TRUE and see how it is different.
 # row.names = FALSE eliminates the numbers in front of each row</code></pre>
 </div>
@@ -195,6 +194,11 @@ filter(QG16.lab.2,factor1 == &quot;b&quot; &amp; factor2 ==&quot;info8&quot;) # 
 8    gene78  1.1132743  0.7142994 -0.2152775       b   info8  0.53743207
 9    gene88 -0.9999763  1.2684340 -0.9384624       b   info8 -0.22333490
 10   gene98  1.4704641  0.8852491  1.2723985       b   info8  1.20937057</code></pre>
+<ul>
+<li><p>At this point you might be wondering why we need to install all those packages and load them? Shouldn’t it be less complicated if we just have all these functions by default, or automatically loaded onto the workspace after installing?</p></li>
+<li><p>The reason we use the library() or require() function to load specific packages is because it will slow down R if we loaded everything we have installed at the beginning as we install more packages.</p></li>
+<li><p>You can think of your R session as your workbench, and the packages as specific tools in your toolbox. You wouldn’t empty out the toolbox onto your workbench for a simple task like sanding a surface. The only thing you need is some sandpaper, and any additional tool just occupies additional space and contributes only to the aesthetics of your workspace (or acts against it).</p></li>
+</ul>
 </div>
 <div id="vector-and-matrix-calculations" class="section level3">
 <h3>2. Vector and Matrix calculations</h3>
@@ -275,6 +279,7 @@ A %*% solve(A) # which results in an identity matrix </code></pre>
 </div>
 <div id="advanced-challenge" class="section level3">
 <h3>Advanced Challenge</h3>
+<p><strong>This challenge goes beyond the scope of what we have learned so far, so don’t panic if you cannot figure it out based on the 2 labs</strong></p>
 <ul>
 <li><p>Can you generate a function that takes a vector with student names with “Weill Cornell” grades as input, and creates a list as an output that has the following entries?</p></li>
 <li><p>“LetterGrade” should have the converted letter grades of each student in it.</p></li>
@@ -288,42 +293,60 @@ standard_letter_grades &lt;- c(&quot;H&quot; = &quot;A&quot;, &quot;HP&quot; = &
 <ul>
 <li><p>Your code should also work when the conversion table changes (no hard coding of letter grades are allowed!)</p></li>
 <li><p>Your function should also be verbose, meaning that it should tell the user how many students are in the input in total, and the breakdown for each grade as well.</p></li>
-<li><p>Example output</p></li>
+</ul>
+<p><strong>Hints</strong></p>
+<ul>
+<li>Syntax of for loops and printing in R (will be covered in the next lab)</li>
+</ul>
+<pre class="r"><code>for ( i in 1:N){
+    cat(&quot;Processing loop number = &quot;,i,&quot;\n&quot;)
+}</code></pre>
+<ul>
+<li>Getting names of vectors</li>
+</ul>
+<pre class="r"><code>names(example.vector1)</code></pre>
+<ul>
+<li>Checking if value is equal to something</li>
+</ul>
+<pre class="r"><code>value == 1
+value == &quot;A&quot;</code></pre>
+<ul>
+<li>Example output</li>
 </ul>
 <pre><code>Total number of students =  20 
-6 students received a letter grade A 
+1 students received a letter grade A 
 3 students received a letter grade B 
-2 students received a letter grade C 
-2 students received a letter grade D 
+4 students received a letter grade C 
+5 students received a letter grade D 
 7 students received a letter grade F </code></pre>
 <pre><code>$Overview
 student_letter_grade
 A B C D F 
-6 3 2 2 7 
+1 3 4 5 7 
 
 $LetterGrade
  student1  student2  student3  student4  student5  student6  student7 
-      &quot;A&quot;       &quot;A&quot;       &quot;F&quot;       &quot;F&quot;       &quot;D&quot;       &quot;F&quot;       &quot;B&quot; 
+      &quot;F&quot;       &quot;A&quot;       &quot;D&quot;       &quot;C&quot;       &quot;F&quot;       &quot;B&quot;       &quot;C&quot; 
  student8  student9 student10 student11 student12 student13 student14 
-      &quot;A&quot;       &quot;C&quot;       &quot;D&quot;       &quot;F&quot;       &quot;A&quot;       &quot;B&quot;       &quot;F&quot; 
+      &quot;B&quot;       &quot;C&quot;       &quot;D&quot;       &quot;F&quot;       &quot;D&quot;       &quot;F&quot;       &quot;F&quot; 
 student15 student16 student17 student18 student19 student20 
-      &quot;A&quot;       &quot;F&quot;       &quot;A&quot;       &quot;F&quot;       &quot;B&quot;       &quot;C&quot; 
+      &quot;F&quot;       &quot;F&quot;       &quot;D&quot;       &quot;D&quot;       &quot;C&quot;       &quot;B&quot; 
 
 $A
-[1] &quot;student1&quot;  &quot;student2&quot;  &quot;student8&quot;  &quot;student12&quot; &quot;student15&quot; &quot;student17&quot;
+[1] &quot;student2&quot;
 
 $B
-[1] &quot;student7&quot;  &quot;student13&quot; &quot;student19&quot;
+[1] &quot;student6&quot;  &quot;student8&quot;  &quot;student20&quot;
 
 $C
-[1] &quot;student9&quot;  &quot;student20&quot;
+[1] &quot;student4&quot;  &quot;student7&quot;  &quot;student9&quot;  &quot;student19&quot;
 
 $D
-[1] &quot;student5&quot;  &quot;student10&quot;
+[1] &quot;student3&quot;  &quot;student10&quot; &quot;student12&quot; &quot;student17&quot; &quot;student18&quot;
 
 $F
-[1] &quot;student3&quot;  &quot;student4&quot;  &quot;student6&quot;  &quot;student11&quot; &quot;student14&quot; &quot;student16&quot;
-[7] &quot;student18&quot;</code></pre>
+[1] &quot;student1&quot;  &quot;student5&quot;  &quot;student11&quot; &quot;student13&quot; &quot;student14&quot; &quot;student15&quot;
+[7] &quot;student16&quot;</code></pre>
 </div>
 </div>
 </div>
