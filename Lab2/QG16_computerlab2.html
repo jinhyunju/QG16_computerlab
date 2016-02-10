@@ -90,9 +90,9 @@ QG16.lab.2.only.a &lt;- subset(QG16.lab.2, factor1 == &quot;a&quot;) # subsettin
 <div id="concept-of-functions" class="section level3">
 <h3>1. Concept of functions</h3>
 <ul>
-<li><p>Every expression in R with parentheses “( )” is a function.</p></li>
+<li><p>“Everything that exists is an object. Eveything that happens is a function call.” - John Chambers</p></li>
 <li><p>We learned that a function is something that takes in an input and gives you an output.</p></li>
-<li><p>The input for an R function is anything written between “( )” of a function, and the output(s) the result running the function.</p></li>
+<li><p>The input for an R function is written between “( )” of a function, and the output(s) are the result(s) returned by the function.</p></li>
 <li><p>R has many built in functions for commonly used methods in statistics.</p></li>
 </ul>
 <pre class="r"><code># Examples of built in functions 
@@ -136,8 +136,41 @@ The inputs are =  100 1000
 The output is =  5 </code></pre>
 <pre class="r"><code>test.output</code></pre>
 <pre><code>[1] 5</code></pre>
+<p><strong>Question 1</strong></p>
 <ul>
-<li><p>We can also load functions from published packages if somebody else did the hard work for us.</p></li>
+<li>Can you guess what is going to happen?</li>
+</ul>
+<pre class="r"><code>x &lt;- 11
+
+test_function &lt;- function(y){
+  output &lt;- x + y
+  return(output)
+}
+
+test_function(2) </code></pre>
+<pre class="r"><code>test_function2 &lt;- function(x,y,z){
+  output1 &lt;- x + y + z 
+  output2 &lt;- x * y * z
+  output3 &lt;- x ^ y ^ z 
+  
+}
+
+x &lt;- test_function2(1,2,3) 
+
+print(x)</code></pre>
+<pre class="r"><code>x &lt;- 10 
+
+test_function3 &lt;- function(){
+  x &lt;- 20
+}
+
+test_function3() 
+
+print(x)</code></pre>
+<div id="installing-and-loading-packages" class="section level4">
+<h4>Installing and Loading packages</h4>
+<ul>
+<li><p>We can also use functions by installing published packages if somebody else did the hard work for us.</p></li>
 <li><p>Let’s see what happens if we try to run a function called mutate().</p></li>
 </ul>
 <pre class="r"><code>mutate()</code></pre>
@@ -200,8 +233,66 @@ filter(QG16.lab.2,factor1 == &quot;b&quot; &amp; factor2 ==&quot;info8&quot;) # 
 <li><p>You can think of your R session as your workbench, and the packages as specific tools in your toolbox. You wouldn’t empty out the toolbox onto your workbench for a simple task like sanding a surface. The only thing you need is some sandpaper, and any additional tool just occupies additional space and contributes only to the aesthetics of your workspace (or acts against it).</p></li>
 </ul>
 </div>
+</div>
+<div id="for-loops" class="section level3">
+<h3>2. for loops</h3>
+<ul>
+<li><p>For loops are mainly used in cases where you want to apply a function iteratively over a vector, matrix or data frame (or just simply do a task multiple times)</p></li>
+<li><p>Structure of the code = for (counter in vector) { do stuff }</p></li>
+<li><p>Syntax of a simple for loop (Printing out the process helps a lot)</p></li>
+</ul>
+<pre class="r"><code>N &lt;- 3
+for ( i in 1:N ){
+    cat(&quot;Processing loop number = &quot;,i,&quot;\n&quot;)
+}</code></pre>
+<pre><code>Processing loop number =  1 
+Processing loop number =  2 
+Processing loop number =  3 </code></pre>
+<ul>
+<li>You can use any legal variable name for the counter</li>
+</ul>
+<pre class="r"><code>for ( anything_goes in c(1,3,5) ){
+    cat(&quot;Processing loop number = &quot;,anything_goes,&quot;\n&quot;)
+}</code></pre>
+<pre><code>Processing loop number =  1 
+Processing loop number =  3 
+Processing loop number =  5 </code></pre>
+<ul>
+<li><p>You can also create a loop within a loop</p></li>
+<li><p>For this example, let’s say that you want to create multiple samples with different sample sizes</p></li>
+</ul>
+<pre class="r"><code>for ( outer in 1:3 ){
+    cat(&quot;Processing Outer Loop #&quot;, outer, &quot;\n&quot;)
+  for ( inner in 1:2 ){
+      cat(&quot;Processing |_ Inner Loop #&quot;, inner, &quot;\n&quot;)
+    }
+}</code></pre>
+<pre><code>Processing Outer Loop # 1 
+Processing |_ Inner Loop # 1 
+Processing |_ Inner Loop # 2 
+Processing Outer Loop # 2 
+Processing |_ Inner Loop # 1 
+Processing |_ Inner Loop # 2 
+Processing Outer Loop # 3 
+Processing |_ Inner Loop # 1 
+Processing |_ Inner Loop # 2 </code></pre>
+<p><strong>Question2</strong></p>
+<ul>
+<li>What is the final value of N ?</li>
+</ul>
+<pre class="r"><code>N &lt;- 3
+
+for( i in 1:N){
+  
+  cat(&quot;Processing loop = &quot;, i, &quot;\n&quot;)
+  N &lt;- N + 1
+  
+}
+
+print(N)</code></pre>
+</div>
 <div id="vector-and-matrix-calculations" class="section level3">
-<h3>2. Vector and Matrix calculations</h3>
+<h3>3. Vector and Matrix calculations</h3>
 <ul>
 <li>If you want to modify each element of a vector by a scalar value you can use the math operations that we have learned last week.</li>
 </ul>
@@ -228,7 +319,7 @@ filter(QG16.lab.2,factor1 == &quot;b&quot; &amp; factor2 ==&quot;info8&quot;) # 
 <pre><code>     [,1] [,2] [,3]
 [1,]    2    2    2
 [2,]    4    4    4</code></pre>
-<pre class="r"><code>example.matrix1 ^2</code></pre>
+<pre class="r"><code>example.matrix1 ^ 2</code></pre>
 <pre><code>     [,1] [,2] [,3]
 [1,]    1    1    1
 [2,]    4    4    4</code></pre>
@@ -279,7 +370,6 @@ A %*% solve(A) # which results in an identity matrix </code></pre>
 </div>
 <div id="advanced-challenge" class="section level3">
 <h3>Advanced Challenge</h3>
-<p><strong>This challenge goes beyond the scope of what we have learned so far, so don’t panic if you cannot figure it out based on the 2 labs</strong></p>
 <ul>
 <li><p>Can you generate a function that takes a vector with student names with “Weill Cornell” grades as input, and creates a list as an output that has the following entries?</p></li>
 <li><p>“LetterGrade” should have the converted letter grades of each student in it.</p></li>
@@ -296,12 +386,6 @@ standard_letter_grades &lt;- c(&quot;H&quot; = &quot;A&quot;, &quot;HP&quot; = &
 </ul>
 <p><strong>Hints</strong></p>
 <ul>
-<li>Syntax of for loops and printing in R (will be covered in the next lab)</li>
-</ul>
-<pre class="r"><code>for ( i in 1:N){
-    cat(&quot;Processing loop number = &quot;,i,&quot;\n&quot;)
-}</code></pre>
-<ul>
 <li>Getting names of vectors</li>
 </ul>
 <pre class="r"><code>names(example.vector1)</code></pre>
@@ -314,39 +398,38 @@ value == &quot;A&quot;</code></pre>
 <li>Example output</li>
 </ul>
 <pre><code>Total number of students =  20 
-1 students received a letter grade A 
-3 students received a letter grade B 
-4 students received a letter grade C 
-5 students received a letter grade D 
-7 students received a letter grade F </code></pre>
+2 students received  A 
+4 students received  B 
+6 students received  C 
+3 students received  D 
+5 students received  F </code></pre>
 <pre><code>$Overview
 student_letter_grade
 A B C D F 
-1 3 4 5 7 
+2 4 6 3 5 
 
 $LetterGrade
  student1  student2  student3  student4  student5  student6  student7 
-      &quot;F&quot;       &quot;A&quot;       &quot;D&quot;       &quot;C&quot;       &quot;F&quot;       &quot;B&quot;       &quot;C&quot; 
+      &quot;A&quot;       &quot;C&quot;       &quot;F&quot;       &quot;A&quot;       &quot;F&quot;       &quot;F&quot;       &quot;C&quot; 
  student8  student9 student10 student11 student12 student13 student14 
-      &quot;B&quot;       &quot;C&quot;       &quot;D&quot;       &quot;F&quot;       &quot;D&quot;       &quot;F&quot;       &quot;F&quot; 
+      &quot;B&quot;       &quot;B&quot;       &quot;F&quot;       &quot;F&quot;       &quot;D&quot;       &quot;C&quot;       &quot;B&quot; 
 student15 student16 student17 student18 student19 student20 
-      &quot;F&quot;       &quot;F&quot;       &quot;D&quot;       &quot;D&quot;       &quot;C&quot;       &quot;B&quot; 
+      &quot;B&quot;       &quot;C&quot;       &quot;C&quot;       &quot;C&quot;       &quot;D&quot;       &quot;D&quot; 
 
 $A
-[1] &quot;student2&quot;
+[1] &quot;student1&quot; &quot;student4&quot;
 
 $B
-[1] &quot;student6&quot;  &quot;student8&quot;  &quot;student20&quot;
+[1] &quot;student8&quot;  &quot;student9&quot;  &quot;student14&quot; &quot;student15&quot;
 
 $C
-[1] &quot;student4&quot;  &quot;student7&quot;  &quot;student9&quot;  &quot;student19&quot;
+[1] &quot;student2&quot;  &quot;student7&quot;  &quot;student13&quot; &quot;student16&quot; &quot;student17&quot; &quot;student18&quot;
 
 $D
-[1] &quot;student3&quot;  &quot;student10&quot; &quot;student12&quot; &quot;student17&quot; &quot;student18&quot;
+[1] &quot;student12&quot; &quot;student19&quot; &quot;student20&quot;
 
 $F
-[1] &quot;student1&quot;  &quot;student5&quot;  &quot;student11&quot; &quot;student13&quot; &quot;student14&quot; &quot;student15&quot;
-[7] &quot;student16&quot;</code></pre>
+[1] &quot;student3&quot;  &quot;student5&quot;  &quot;student6&quot;  &quot;student10&quot; &quot;student11&quot;</code></pre>
 </div>
 </div>
 </div>
