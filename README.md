@@ -6,8 +6,8 @@ Quantitative Genomics and Genetics 2016 Spring
 ### Lab 1 
 ---
 
-- R Basics 
-- Data structures 
+#### 1) R Basics 
+#### 2) Data structures 
 
 * [Slides](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab1/QG16_computerlab1_page_ver.html "Lab1")
 * [Data](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab1/QG16-lab1-data.csv)
@@ -15,16 +15,16 @@ Quantitative Genomics and Genetics 2016 Spring
 ### Lab 2
 ---
 
-- Functions
-- For Loops
-- Vector/Matrix Calculations 
+#### 1) Functions
+#### 2) For Loops
+#### 3) Vector/Matrix Calculations 
 
 * [Slides](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab2/QG16_computerlab2.html "Lab1")
 
 
 ### Lab 3 
 
-- Basic Data Visualization
-- Functions for Probability Distributions
+#### 1) Basic Data Visualization
+#### 2) Functions for Probability Distributions
 
 * [Slides](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab3/QG16_computerlab3.html "Lab3")
