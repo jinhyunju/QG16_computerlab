@@ -97,7 +97,7 @@ hist(normal.vector,                   # input data
      xlab = "X label",                # x axis label
      main = "Histogram with options", # main title 
      col = "skyblue", # setting the fill color for bars
-     breaks = 20) # breaks specifies the number of bins
+     breaks = 5) # breaks specifies the number of bins
 ```
 
 - Setting the option probability to TRUE will change the y axis from counts to probability densities. 
@@ -120,10 +120,14 @@ lines(density(normal.vector)) # add a density line to the histogram
 
 # the png function creates a png file at a custom location. 
 # you can also specify the resolution and the size of the image, look up ?png for details
-png(file = "~/Dropbox/Quantitative_Genomics_2014/Computer_lab_3/Normal_distribution_histogram.png")
+png(file = "./Normal_distribution_histogram.png")
 
-more.normals <- rnorm(10000, 0,1)
-hist(more.normals, xlab = "X label",main = "Bigger sample size",col = "skyblue", probability = TRUE)
+hist(normal.vector, 
+     xlab = "X label", 
+     main = "Plot saved on disk", 
+     col = "skyblue", 
+     probability = TRUE)
+
 lines(density(more.normals)) 
 
 dev.off() # after plotting on the png file, the png file has to be closed in order to save the plot correctly. Otherwise, subsequent plots will be written to the same png file and that means trouble.
@@ -155,14 +159,14 @@ x1 <- seq(-5, 0, by = 0.1)
 plot(x1, dnorm(x1, mean = 0,sd = 1),
      ylab = "density", 
      main = "Normal Density for x1",
-     pch = 20) # pch option changes the style for points 
+     pch = 20, cex = 0.5) # pch option changes the style for points 
 
 x2 <- seq(-5, 5, by = 0.1)
 
 plot(x2, dnorm(x2, mean = 0,sd = 1), 
      ylab = "density", 
      main = "Normal Density for x2",
-     pch = 20) # pch option changes the style for points 
+     pch = 20, cex = 0.5) # pch option changes the style for points 
 
 
 ```
