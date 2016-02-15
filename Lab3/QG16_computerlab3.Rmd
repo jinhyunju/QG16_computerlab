@@ -258,7 +258,7 @@ qnorm(0.75, mean = 0,sd = 1)
 
 - Here is a toy example for drawing a polygon.
 
-```{r ,fig.width = 4,fig.height = 4,fig.align='center', echo = FALSE}
+```{r ,fig.width = 4,fig.height = 4,fig.align='center', echo = TRUE}
 x <- seq(-5, 5, by = 0.5) 
 
 y <- 2 * x
