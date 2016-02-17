@@ -27,34 +27,33 @@ Computer Lab 3
 
 #### plot() 
 
-- plot() generates a scatter plot or line plot 
+- plot() generates a X-Y plot
 
 - The basic syntax is plot(x-axis, y-axis)
 
-- Adding labeles makes the plot more informative
+- You can add more information to the plot with axis labels and titles.
 
 ```{r ,fig.width = 4,fig.height = 4,fig.align='center' }
 
 x <- seq(-5, 5, by = 0.5) 
 
-y <- 2 * x - 3
+y <- x - 3
 
 plot(x, y, 
      xlab = "X axis label here", 
      ylab = "Y axis label here", 
      main = "Plot Title here")
 
+# These two lines draw the red dotted lines marking x = 0, y = 0
 # the abline function adds custom lines to the plot generated above
 abline(h = 0, lty = 2, col = 'red')
 abline(v = 0, lty = 2, col = 'red')
 
 ```
 
-- The plot() function can also plot the results in lines instead of points 
+- You can also change the points into lines with the type option.
 
 - Ranges for x and y can be specified with xlim and ylim options
-
-- Note the type option in the function call 
 
 ```{r ,fig.width = 4,fig.height = 4,fig.align='center' }
 
@@ -78,9 +77,9 @@ abline(v = 0, lty = 2, col = 'red')
 
 #### Histograms 
 
-- The hist() function generates a histogram
+- The hist() function generates histograms
 
-- Generating a histogram is a good way to get an initial look on the data. 
+- Histograms are good to get an initial look on the data. 
 
 ```{r ,fig.width = 4,fig.height = 4,fig.align='center' }
 normal.vector <- rnorm(1000) 
@@ -144,6 +143,8 @@ dev.off() # after plotting on the png file, the png file has to be closed in ord
 - Generating random values sampled from a normal distribution with a specified mean and sd
 
 ```{r, comment=NA}
+
+# Generate 5 samples drawn from a normal distribution with mean = 0 and sd = 1
 rnorm(n = 5, mean = 0, sd = 1)
 ```
 
@@ -173,7 +174,7 @@ plot(x2, dnorm(x2, mean = 0,sd = 1),
 
 - pnorm() returns the value for the cumulative density function for a given point
 
-- We can think of it as the area under the curve for the density function
+- We can think of it as the area under the curve up to a certain value for a density function
 
 ```{r ,fig.width = 4,fig.height = 4,fig.align='center', echo = FALSE}
 
@@ -207,7 +208,7 @@ polygon(x_cord, y_cord, col = 'skyblue')
 pnorm(1, mean = 0,sd = 1)
 ```
 
-- We can also calculate the are from 1 to infinity by setting the lower.tail option to FALSE
+- We can also calculate the are from a given point to infinity by setting the lower.tail option to FALSE
 
 - Since the normal distribution is symetric around 0 this should give you the same value as pnorm(-1)
 
@@ -256,7 +257,7 @@ qnorm(0.75, mean = 0,sd = 1)
 
 ### Exercise
 
-- Create a function that generates a plot visualizing the area under the curve for a standard normal distribution from -5 to the given point. (Just like the plots used in the pnorm() section).
+- Create a function that generates a plot visualizing the area under the curve for a standard normal distribution (where x has the range from -5 to 5) to a given point. (Just like the plots used in the pnorm() section).
 
 **Hints**
 
