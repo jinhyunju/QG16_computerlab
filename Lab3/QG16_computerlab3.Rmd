@@ -88,13 +88,36 @@ abline(v = 0, lty = 2, col = 'red')
 
 ```
 
+- You can also plot functions directly with plot(). 
+
+- Here is an example that plots the p.d.f for the normal distribution. 
+
+```{r ,fig.width = 4,fig.height = 4,fig.align='center' }
+
+normal_dist <- function(x, mu = 0, sigma =1) {
+  1/ (sigma * sqrt(2 * pi)) * exp( - ((x - mu)^2) / (2 * sigma ^ 2) )
+}
+
+plot(normal_dist, xlim = c(-5,5))
+
+```
+
+- To change the mean and standard deviation you would have to called it like this:
+
+
+```{r ,fig.width = 4,fig.height = 4,fig.align='center' }
+
+plot(function(x) normal_dist(x, mu = 2, sigma = 1), xlim = c(-5,5))
+
+```
+
 #### Histograms 
 
 - The hist() function generates histograms
 
 - Histograms are good to get an initial look on the data. 
 
-```{r ,fig.width = 4,fig.height = 4,fig.align='center' }
+```{r ,fig.width = 4,fig.height = 4,fig.align='center', fig.show = 'hold'}
 normal.vector <- rnorm(1000) 
 
 # rnorm(() generates random points from a normal distribution
@@ -102,14 +125,26 @@ normal.vector <- rnorm(1000)
      
 # most basic form
 hist(normal.vector)
+```
+
+```{r ,fig.width = 8,fig.height = 4,fig.align='center', fig.show = 'hold'}
 
 # adding options
 
+par(mfrow = c(1,2))
+
 hist(normal.vector,                   # input data
      xlab = "X label",                # x axis label
-     main = "Histogram with options", # main title 
+     main = "Histogram with 5 breaks ", # main title 
      col = "skyblue", # setting the fill color for bars
      breaks = 5) # breaks specifies the number of bins
+
+hist(normal.vector,                   # input data
+     xlab = "X label",                # x axis label
+     main = "Histogram with 20 breaks ", # main title 
+     col = "skyblue", # setting the fill color for bars
+     breaks = 20) # breaks specifies the number of bins
+
 ```
 
 - Setting the option probability to TRUE will change the y axis from counts to probability densities. 
