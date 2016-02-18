@@ -1,0 +1,54 @@
+---
+author: "Your name here"
+output: html_document
+---
+## Quantitative Genomics and Genetics 
+### Markdown Template
+
+-- Date 
+
+-- Author: Your name here
+
+
+### 1. Title of section
+
+- This creates a bullet point
+
+For question X where we have to do Y this is the code 
+:
+
+
+```{r, comment = NA, eval = FALSE}
+# code goes in here 
+example.vector <- seq(1,25,by= 2)
+example.vector
+example.vector > 10
+example.vector >= 10
+example.vector <- 
+```
+
+
+### 2. Another title
+
+- Describe your code
+
+```{r, comment = NA, eval = FALSE}
+# The eval FALSE option prevents the code from running
+
+if (condition) {
+  do stuff
+} else {
+  do stuff
+}
+
+# OR you can add more levels by using else if
+
+if(condition){
+  do stuff
+} else if (condition 2){
+  do stuf
+} else {
+  do stuff
+}
+```
+
