@@ -12,6 +12,19 @@ Computer Lab 3
 
 -- Author: Jin Hyun Ju (jj328@cornell.edu)
 
+
+### Announcements
+
+Homework submission guidelines for **NYC students**
+
+1) File name format = QG16_HW#_Firstname_Lastname.pdf
+
+2) Submitting R codes 
+
+- Use Rmarkdown and all working directories should be set to "./" if there are input datasets
+
+- Submit your .Rmd script (HTML optional). There will be penalties for scripts that fails to compile. (except errors related to missing dependencies - ex) packages not installed on my computer, just make sure to mention which packages have been called).
+
 ### [Review]
 
 - Instructions for submitting the R code for homework 3
@@ -180,7 +193,7 @@ plot(x2, dnorm(x2, mean = 0,sd = 1),
 
 plot(x2, dnorm(x2, mean = 0,sd = 1), 
      ylab = "density", 
-     main = "Cumulative density -1",
+     main = "Cumulative density, x = -1",
      type = 'l')
 
 x_cord <- c(-5,seq(-5,-1, by = 0.1),-1)
@@ -196,7 +209,7 @@ pnorm(-1, mean = 0,sd = 1)
 ```{r ,fig.width = 4,fig.height = 4,fig.align='center', echo = FALSE}
 plot(x2, dnorm(x2, mean = 0,sd = 1), 
      ylab = "density", 
-     main = "Cumulative density 1",
+     main = "Cumulative density, x = 1",
      type = 'l')
 
 x_cord <- c(-5,seq(-5,1, by = 0.1),1)
@@ -215,7 +228,7 @@ pnorm(1, mean = 0,sd = 1)
 ```{r ,fig.width = 4,fig.height = 4,fig.align='center', echo = FALSE}
 plot(x2, dnorm(x2, mean = 0,sd = 1), 
      ylab = "density", 
-     main = "Cumulative density 1",
+     main = "Cumulative density, x = 1 (<-direction)",
      type = 'l')
 
 x_cord <- c(1,seq(1,5, by = 0.1),5)
@@ -234,7 +247,7 @@ pnorm(1, mean = 0,sd = 1, lower.tail = FALSE)
 ```{r ,fig.width = 4,fig.height = 4,fig.align='center', echo = FALSE}
 plot(x2, dnorm(x2, mean = 0,sd = 1), 
      ylab = "density", 
-     main = "Cumulative density 1",
+     main = "0.25, 0.5, 0.75 - Quantile Values",
      type = 'l')
 
 abline(v = qnorm(0.25), lty = 2, col = 'red')
