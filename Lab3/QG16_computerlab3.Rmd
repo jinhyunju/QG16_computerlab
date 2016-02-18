@@ -19,15 +19,13 @@ Homework submission guidelines for **NYC students**
 
 1) File name format = QG16_HW#_Firstname_Lastname.pdf
 
-2) Submitting R codes 
+2) Submitting R code
 
 - Use Rmarkdown and all working directories should be set to "./" if there are input datasets
 
-- Submit your .Rmd script (HTML optional). There will be penalties for scripts that fails to compile. (except errors related to missing dependencies - ex) packages not installed on my computer, just make sure to mention which packages have been called).
+- Submit your .Rmd script (HTML optional). There will be penalties for scripts that fail to compile. (except errors related to missing dependencies - e.g. packages not installed on my computer, just make sure to mention which packages have been called).
 
 ### [Review]
-
-- Instructions for submitting the R code for homework 3
 
 - How do we define functions?
 
@@ -115,12 +113,12 @@ plot(function(x) normal_dist(x, mu = 2, sigma = 1), xlim = c(-5,5))
 
 - The hist() function generates histograms
 
-- Histograms are good to get an initial look on the data. 
+- Histograms are good to get an initial look at the data. 
 
 ```{r ,fig.width = 4,fig.height = 4,fig.align='center', fig.show = 'hold'}
 normal.vector <- rnorm(1000) 
 
-# rnorm(() generates random points from a normal distribution
+# rnorm() generates random points from a normal distribution
 # more information about this function will be covered in the next section                     
      
 # most basic form
@@ -175,7 +173,7 @@ hist(normal.vector,
      col = "skyblue", 
      probability = TRUE)
 
-lines(density(more.normals)) 
+lines(density(normal.vector)) 
 
 dev.off() # after plotting on the png file, the png file has to be closed in order to save the plot correctly. Otherwise, subsequent plots will be written to the same png file and that means trouble.
 
@@ -282,17 +280,17 @@ pnorm(1, mean = 0,sd = 1, lower.tail = FALSE)
 ```{r ,fig.width = 4,fig.height = 4,fig.align='center', echo = FALSE}
 plot(x2, dnorm(x2, mean = 0,sd = 1), 
      ylab = "density", 
-     main = "0.25, 0.5, 0.75 - Quantile Values",
+     main = "0.1, 0.5, 0.75 - Quantile Values",
      type = 'l')
 
-abline(v = qnorm(0.25), lty = 2, col = 'red')
+abline(v = qnorm(0.1), lty = 2, col = 'red')
 abline(v = qnorm(0.5), lty = 2, col = 'red')
 abline(v = qnorm(0.75), lty = 2, col = 'red')
 
 ```
 
 ```{r, comment = NA}
-qnorm(0.25, mean = 0,sd = 1)  
+qnorm(0.1, mean = 0,sd = 1)  
 qnorm(0.5, mean = 0,sd = 1)  
 qnorm(0.75, mean = 0,sd = 1)  
 ```
@@ -339,6 +337,7 @@ pnorm_viz <- function(input_value){
     x_cord <- c(-5,poly_sequence,input_value)
     y_cord <- c(0,dnorm(poly_sequence),0)
     polygon(x_cord, y_cord, col = 'skyblue')
+    cat("Area Under the Curve = ", pnorm(input_value), "\n")
 }
 ```
 
