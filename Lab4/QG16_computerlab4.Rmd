@@ -1,0 +1,198 @@
+---
+author: "Jinhyun Ju"
+output: html_document
+---
+
+Quantitative Genomics and Genetics 2016
+======
+
+Computer Lab 4
+------
+
+-- 25 February 2016
+
+-- Author: Jin Hyun Ju (jj328@cornell.edu)
+
+### 1. Logical expressions and some useful functions
+
+- In case you are interested in finding out if certain elements of a vector are greater than or smaller than a certain value, use > < >= <=
+
+```{r, comment = NA}
+example.vector <- seq(1,25,by= 2)
+example.vector
+example.vector > 10
+example.vector >= 10
+example.vector <= 5
+```
+
+- The same applies to matrices
+
+```{r, comment = NA}
+example.mx <- matrix(c(2,5,7,-2,-5,-10), ncol = 3, byrow=T)
+which(example.mx < 1)
+```
+
+- You can also look for a specific value 
+
+```{r, comment = NA}
+example.vector == 3
+```
+
+- ! tells R to look for the opposite. != means not equal to 
+
+```{r, comment = NA}
+example.vector != 3
+```
+
+- You can also combine them with AND or OR operators
+
+```{r, comment = NA}
+# Example of an AND operator
+example.vector > 5 & example.vector < 10
+
+# if you want to see the actual elements 
+example.vector[example.vector >10 & example.vector < 20]
+
+
+# Example of an OR operator
+example.vector > 10 | example.vector < 20
+
+example.vector < 10 | example.vector > 20
+
+```
+
+
+- If you want to check whether a certain element is present or absent in a vector use the %in% operator
+
+```{r, comment = NA}
+
+fruits <- c("banana","apple","strawberry","peach","mango")
+
+"mango" %in% fruits
+
+"durian" %in% fruits
+```
+
+- We can see what the ! operator is doing by wrapping the previous expression with a !() 
+
+```{r, comment = NA}
+!("durian" %in% fruits)
+
+```
+
+- You can find out the index of a certain entry in a vector by using the which() function 
+
+```{r, comment = NA}
+which(fruits == "apple")
+```
+
+- If you want to compare two vectors,
+
+```{r, comment = NA}
+fruits2 <- c("orange","banana","durian","cherry","mango","apple")
+
+fruits2 %in% fruits
+# show me the position
+which(fruits2 %in% fruits)
+
+#show me the elements
+fruits2[fruits2 %in% fruits]
+
+# There is also a function for this
+intersect(fruits2, fruits)
+
+```
+
+### 2. If / else statements 
+
+- By using if and else statements you can insert condition specific executions in your script
+
+- The structure looks like this
+
+```{r, comment = NA, eval = FALSE}
+if (condition) {
+  do stuff
+} else {
+  do stuff
+}
+
+# OR you can add more levels by using else if
+
+if(condition){
+  do stuff
+} else if (condition 2){
+  do stuf
+} else {
+  do stuff
+}
+```
+
+- For example, let's say that we want to generate samples drawn from a normal distribution and we only want to keep those which have a mean above 0.
+
+```{r, comment=NA}
+kept.samples <- vector()
+
+for(index in 1:10){
+  samples <- rnorm(1000,0,1)
+  sample.mean <- mean(samples)
+  if(sample.mean > 0){
+    cat("Keeping sample #",index,"with mean = ",sample.mean,"\n")
+    kept.samples <- rbind(kept.samples, samples)
+  } else {
+    cat("Discarding sample #",index, "with mean = ",sample.mean,"\n")
+  }
+  
+}
+
+# check if we have 2 samples saved
+dim(kept.samples)
+```
+
+### Exercise
+
+- Create a function that can generate X number of random samples with sample size N from either a normal or uniform distribution. (You don't have to specify additional parameters, just use the default values)
+
+- For example, if I tell it to generate 10 random samples (N=1000) from a uniform distribution, the output should be a matrix containing all 10 samples drawn from a uniform distribution.
+
+
+
+
+
+
+
+```{r, include= FALSE,comment = NA}
+
+# The basic solution
+
+# X = Number of samples, N = sample size, distribution = "normal" or "uniform"
+sample.generator <- function(X,N,distribution){
+  #declare matrix that will save the samples
+  samples <- matrix(NA, nrow = X, ncol = N)
+  # generate sample from normal distribution
+  if( distribution == "normal"){
+    for(i in 1:X){
+      samples[i,] <- rnorm(N)
+    } 
+    # generate sample from uniform distribution
+  } else if (distribution == "uniform"){
+    for(i in 1:X){
+      samples[i,] <- runif(N)
+    }
+  }
+ return(samples)  
+}
+
+# Advanced solution with the use of sapply
+sample.generator2 <- function(X,N,distribution){
+  if(distribution == "normal"){
+    samples <- sapply(1:X, function(a) rnorm(N) )  
+  } else{
+    samples <- sapply(1:X, function(a) runif(N) )
+  }  
+  return(samples)
+}
+
+hist(sample.generator2(20,1000,"uniform")[1,])
+sample.generator(10,100,"normal")
+
+```
