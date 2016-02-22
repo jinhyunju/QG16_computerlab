@@ -13,46 +13,92 @@ Computer Lab 4
 
 -- Author: Jin Hyun Ju (jj328@cornell.edu)
 
-### 1. Logical expressions and some useful functions
 
-- In case you are interested in finding out if certain elements of a vector are greater than or smaller than a certain value, use > < >= <=
+### 1. Boolean Data Type
+
+- Boolean data type is a data type with only two possible values, TRUE and FALSE.
+
+- Its main usage is for testing conditions. 
+
+- In R and many other languages, the actual values for TRUE and FALSE are 1 and 0.
+
+- This can be illustrated as follows
+
+```{r, comment = NA}
+
+sum(TRUE + TRUE)
+
+sum(FALSE)
+
+```
+
+- Booleans are useful in testing conditions. 
+
+- For example, if you are interested in finding out if certain elements of a vector are greater than or smaller than a certain value, you can use >, <, >=, <=
 
 ```{r, comment = NA}
 example.vector <- seq(1,25,by= 2)
 example.vector
 example.vector > 10
-example.vector >= 10
+example.vector >= 15
 example.vector <= 5
+```
+
+- Each position where the value meets the condition will be marked with TRUE, and with FALSE otherwise.
+
+- Since TRUE and FALSE are essentially 1 and 0, you can easily find out how many elements satisfy the condition by simply taking the sum of the result. 
+
+```{r, comment = NA}
+
+sum(example.vector >10)
+
 ```
 
 - The same applies to matrices
 
 ```{r, comment = NA}
 example.mx <- matrix(c(2,5,7,-2,-5,-10), ncol = 3, byrow=T)
-which(example.mx < 1)
+example.mx < 1
 ```
 
-- You can also look for a specific value 
+- You can also check if an element is equal to a specific value 
+
+```{r, comment = NA}
+dim(example.mx)[1] == 2
+```
 
 ```{r, comment = NA}
 example.vector == 3
 ```
 
-- ! tells R to look for the opposite. != means not equal to 
+### 2. Boolean Algebra
+
+- Boolean algebra allows you to combine multiple conditions.
+
+- There are three basic operations AND (&), OR (|) and NOT (!).
+
+- The AND (&) operator returns TRUE **only if all conditions are TRUE**
 
 ```{r, comment = NA}
-example.vector != 3
-```
+FALSE & FALSE
+TRUE & FALSE
+TRUE & TRUE
 
-- You can also combine them with AND or OR operators
-
-```{r, comment = NA}
 # Example of an AND operator
 example.vector > 5 & example.vector < 10
 
 # if you want to see the actual elements 
 example.vector[example.vector >10 & example.vector < 20]
 
+```
+
+- The OR (|) operator returns TRUE **when at least one condition is TRUE**
+
+```{r, comment= NA}
+
+FALSE | FALSE
+TRUE | FALSE
+TRUE | TRUE
 
 # Example of an OR operator
 example.vector > 10 | example.vector < 20
@@ -61,6 +107,15 @@ example.vector < 10 | example.vector > 20
 
 ```
 
+- NOT (!) returns the opposite result
+
+```{r, comment = NA}
+!(TRUE)
+
+example.vector != 3
+```
+
+### 3. More on Vector Elements
 
 - If you want to check whether a certain element is present or absent in a vector use the %in% operator
 
@@ -73,7 +128,7 @@ fruits <- c("banana","apple","strawberry","peach","mango")
 "durian" %in% fruits
 ```
 
-- We can see what the ! operator is doing by wrapping the previous expression with a !() 
+- We can see what the ! operator is doing by wrapping the previous expression with !() 
 
 ```{r, comment = NA}
 !("durian" %in% fruits)
@@ -107,6 +162,8 @@ intersect(fruits2, fruits)
 
 - By using if and else statements you can insert condition specific executions in your script
 
+- The code inside an if statement will only be executed when the condition is TRUE
+
 - The structure looks like this
 
 ```{r, comment = NA, eval = FALSE}
@@ -127,72 +184,58 @@ if(condition){
 }
 ```
 
-- For example, let's say that we want to generate samples drawn from a normal distribution and we only want to keep those which have a mean above 0.
 
-```{r, comment=NA}
-kept.samples <- vector()
+- Here is a simple example
 
-for(index in 1:10){
-  samples <- rnorm(1000,0,1)
-  sample.mean <- mean(samples)
-  if(sample.mean > 0){
-    cat("Keeping sample #",index,"with mean = ",sample.mean,"\n")
-    kept.samples <- rbind(kept.samples, samples)
-  } else {
-    cat("Discarding sample #",index, "with mean = ",sample.mean,"\n")
-  }
+```{r, comment = NA}
+
+# Loop over individual elements in example.vector
+for( i in example.vector){
   
+    if( i < 10 ){
+        cat(i, "is smaller than 10 \n") 
+    } else if ( 10 <= i & i < 20){
+        cat(i, "is in the interval [10,20) \n")
+    } else {
+        cat(i, "is larger than 20 \n")
+    }
+
 }
 
-# check if we have 2 samples saved
-dim(kept.samples)
+
 ```
+
 
 ### Exercise
 
-- Create a function that can generate X number of random samples with sample size N from either a normal or uniform distribution. (You don't have to specify additional parameters, just use the default values)
-
-- For example, if I tell it to generate 10 random samples (N=1000) from a uniform distribution, the output should be a matrix containing all 10 samples drawn from a uniform distribution.
-
-
-
-
-
+- Using if/else statements and plotting functions create a function that can generate a histogram, a scatter plot, or a density plot depending on the input. 
 
 
 ```{r, include= FALSE,comment = NA}
 
-# The basic solution
-
-# X = Number of samples, N = sample size, distribution = "normal" or "uniform"
-sample.generator <- function(X,N,distribution){
-  #declare matrix that will save the samples
-  samples <- matrix(NA, nrow = X, ncol = N)
-  # generate sample from normal distribution
-  if( distribution == "normal"){
-    for(i in 1:X){
-      samples[i,] <- rnorm(N)
-    } 
-    # generate sample from uniform distribution
-  } else if (distribution == "uniform"){
-    for(i in 1:X){
-      samples[i,] <- runif(N)
+data_plotter <- function(input_data, plot_type = "histogram"){
+  
+    if(plot_type == "histogram"){
+        hist(input_data, main = "Histogram of input data")  
+    } else if (plot_type == "scatter"){
+        plot(input_data, type = 'p', main = "scatter plot of input data")
+    } else if (plot_type == "density"){
+        plot(density(input_data), main = "Density plot of input data", 
+             type = 'l', 
+             xlim = c(min(input_data), 
+                      max(input_data)))
     }
-  }
- return(samples)  
 }
-
-# Advanced solution with the use of sapply
-sample.generator2 <- function(X,N,distribution){
-  if(distribution == "normal"){
-    samples <- sapply(1:X, function(a) rnorm(N) )  
-  } else{
-    samples <- sapply(1:X, function(a) runif(N) )
-  }  
-  return(samples)
-}
-
-hist(sample.generator2(20,1000,"uniform")[1,])
-sample.generator(10,100,"normal")
 
 ```
+
+```{r, fig.align='center', fig.height = 4, fig.width = 4}
+
+sample_data <- runif(1000)
+
+data_plotter(sample_data, plot_type = "histogram")
+data_plotter(sample_data, plot_type = "scatter")
+data_plotter(sample_data, plot_type = "density")
+
+```
+
