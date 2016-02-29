@@ -1,0 +1,188 @@
+---
+author: "Jinhyun Ju"
+output: html_document
+---
+
+Quantitative Genomics and Genetics 2016
+======
+
+Computer Lab 5
+------
+
+-- 3 March 2016
+
+-- Author: Jin Hyun Ju (jj328@cornell.edu)
+
+### 1. Pseudo Random Numbers
+
+- Generating random numbers may sound like a fairly simple task, but if you think about it and actually try to implement a method for it you will quickly notice that it is a quite difficult problem. 
+
+- The basic mechanism is that the functions starts at a certain number (seed), and generates a sequence of numbers that look "random enough".
+
+- We have already seen a random number generator in action with the rnorm() function which generates random numbers drawn from a normal distribution. 
+
+- Today we will take a look at the more general function sample(). This function allows you to generate random numbers from a sequence with assigned probabilities. 
+
+- The following function call will generate 3 numbers drawn from (1,3,5,7,9) without replacement. 
+
+```{r, comment = NA}
+sample(x = c(1,3,5,7,9),
+       size= 3, 
+       replace = FALSE)
+```
+
+- When you set replace = TRUE, the same number can appear multiple times in the sample.
+
+```{r, comment = NA}
+for( index in 1:5){
+  sample.temp <- sample(x= c(1,3,5,7,9),
+                        size= 3, 
+                        replace = TRUE)
+  cat("Sample #",index,"=",sample.temp, "\n")
+}
+```
+
+- You can also set specific probabilities for the numbers if you are interested in running a casino.
+
+```{r, comment = NA}
+for( index in 1:5){
+  sample.temp <- sample(x= c(1,3,5,7,9),
+                        size= 3, 
+                        replace = TRUE, 
+                        prob = c(0.1,0.1,0.1,0.1,0.6))
+  cat("Sample #",index,"=",sample.temp, "\n")
+}
+
+```
+
+- Note that the sample function also works for strings as well. This will come in handy when we have to simulate genotype values later in the course. 
+
+```{r, comment = NA}
+sample(x = c("A","T","G","C"),
+       size= 10, 
+       replace = TRUE,
+       prob = c(0.3,0.3,0.2,0.2))
+```
+
+- It is sometimes very useful to generate the exact same results from processes that involve random numbers. You can check if your code is doing the right thing, and if not you can probably find out where it is wrong. We can set a seed, which is used as a reference point to generate random numbers, to generate identical not-so-random-anymore numbers.
+
+```{r, comment = NA}
+
+set.seed(1987) 
+sample(x = 1:100,size = 10, replace = FALSE)
+
+set.seed(1987)
+sample(x = 1:100,size = 10, replace = FALSE)
+
+sample(x = 1:100,size = 10, replace = FALSE)
+
+```
+
+- The same is true for the random sampling functions from specific distributions.
+
+```{r,comment = NA}
+
+set.seed(2002)
+rnorm(10)
+
+set.seed(2002)
+rnorm(10)
+
+```
+
+### 2. paste() function
+
+- paste() is a very useful function when you have to combine constant and changing information.
+
+- For example, if you want to generate multiple files with the same prefix you can use the paste function like this:
+
+```{r, comment = NA}
+
+for( i in 1:5){
+  file.name <- paste("QG16","Lab5","file",i,sep = "_")
+  # you can add as many elements as you want within the parentheses, the sep option specifies the separation character
+  file.name <- paste(file.name, "txt", sep = ".")
+  cat(file.name, "\n")    
+}
+
+```
+
+
+### Exercise - The Sampling Distribution of the Mean and P values
+
+```{r last, comment = NA, echo = FALSE}
+
+sampling_function<- function(sample_size,
+                             number_of_samples,
+                             population_mean,
+                             population_sd){
+    sample_means <- c()
+    
+    for ( i in 1:number_of_samples ){
+          sample_means[i] <- mean(rnorm(sample_size,
+                                        mean = population_mean, 
+                                        sd = population_sd))
+      
+    }
+    
+    sample_dist_mean <- mean(sample_means)
+    sample_dist_sd <- sd(sample_means)
+    
+    pvals <- pnorm(abs(sample_means), 
+                   mean = population_mean, 
+                   sd = population_sd / sqrt(sample_size), 
+                   lower.tail = FALSE)
+    
+    n0_reject <- sum(pvals < 0.025)
+    
+    cat("Null Hypothesis is rejected in ", 
+        n0_reject," out of ",number_of_samples," cases",
+        "(",100 * n0_reject/number_of_samples ,"%)", "\n")
+    
+    par(mfrow = c(1,2))
+    plot(density(sample_means), main = "Distribution of the Sample Mean",
+         xlab = sprintf("mean = %.3f / sd = %.3f", sample_dist_mean,sample_dist_sd))
+    hist(pvals, main = "Histogram of P-values")
+    
+  
+}
+set.seed(777)
+```
+
+**Part 1**
+
+- Create 100 samples from a normal distribution with a sample size of 50, $\mu = 0$, and $\sigma = 1$.
+
+- For each sample calculate the mean and save it to a vector.
+
+- Plot the density for the sample means (there should be 100 sample means) and calculate the mean and standard deviation of this distribution.
+
+**Part 2**
+
+- Use pnorm() to calculate p-values for each sample mean using the sampling distribution of the mean, which should have slightly different parameters compared to the original distribution.
+
+- Plot a histogram for the p-value distribution, and show the number of times where we reject the null hypothesis ( $\mu =0$ ) with a threshold of $\alpha = 0.05$ and print it out. Keep in mind that in this case we are testing if the mean is **different** from 0, not larger or smaller. 
+
+**Part 3**
+
+- Generate a function based on the work you have done, so that you can change the number of samples, sample size, and the mean and standard deviation of the population that we are sampling from. 
+
+- Test your function with a seed set at 777 and compare your results with the results shown here.
+
+- The output of the function should look something like this. 
+
+```{r, fig.height = 4, fig.width=9}
+sampling_function(sample_size = 100, 
+                  number_of_samples = 1000, 
+                  population_mean = 0,
+                  population_sd = 1)
+```
+
+
+**Part 4**
+
+- Test your function with different input parameters. 
+
+- Does the percentage of cases where we reject the null hypothesis change depending on your sample size?
+
+- Which parameters affect the sampling distribution?
