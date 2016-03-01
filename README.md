@@ -3,6 +3,15 @@ Quantitative Genomics and Genetics 2016 Spring
 
 ## Computer Lab Material 
 
+### Material For This Week
+
+### Lab 5 - [Notes](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab5/QG16_computerlab5.html "Lab5")
+---
+
+* Random Numbers in R
+* Sampling Distribution of the Mean and P-values
+
+
 ### Lab 1 - [Notes](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab1/QG16_computerlab1_page_ver.html "Lab1") , [Data](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab1/QG16-lab1-data.csv)
 ---
 
