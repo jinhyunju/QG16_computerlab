@@ -28,3 +28,8 @@ Quantitative Genomics and Genetics 2016 Spring
 * Boolean data type
 * If statements
 
+### Lab 5 - [Notes](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab5/QG16_computerlab5.html "Lab5")
+---
+
+* Random Numbers in R
+* Sampling Distribution of the Mean and P-values
