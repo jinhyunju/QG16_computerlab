@@ -151,7 +151,7 @@ set.seed(777)
 
 **Part 1**
 
-- Create 100 samples from a normal distribution with a sample size of 50, $\mu = 0$, and $\sigma = 1$.
+- Create 100 samples from a normal distribution with a sample size of 50, mean = 0, and sd = 1.
 
 - For each sample calculate the mean and save it to a vector.
 
@@ -161,7 +161,7 @@ set.seed(777)
 
 - Use pnorm() to calculate p-values for each sample mean using the sampling distribution of the mean, which should have slightly different parameters compared to the original distribution.
 
-- Plot a histogram for the p-value distribution, and show the number of times where we reject the null hypothesis ( $\mu =0$ ) with a threshold of $\alpha = 0.05$ and print it out. Keep in mind that in this case we are testing if the mean is **different** from 0, not larger or smaller. 
+- Plot a histogram for the p-value distribution, and show the number of times where we reject the null hypothesis ( mean = 0 ) with a threshold of alpha = 0.05 and print it out. Keep in mind that in this case we are testing if the mean is **different** from 0, not larger or smaller. 
 
 **Part 3**
 

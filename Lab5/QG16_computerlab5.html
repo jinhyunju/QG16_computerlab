@@ -80,7 +80,7 @@ img {
 <pre class="r"><code>sample(x = c(1,3,5,7,9),
        size= 3, 
        replace = FALSE)</code></pre>
-<pre><code>[1] 1 3 7</code></pre>
+<pre><code>[1] 1 9 3</code></pre>
 <ul>
 <li>When you set replace = TRUE, the same number can appear multiple times in the sample.</li>
 </ul>
@@ -90,11 +90,11 @@ img {
                         replace = TRUE)
   cat(&quot;Sample #&quot;,index,&quot;=&quot;,sample.temp, &quot;\n&quot;)
 }</code></pre>
-<pre><code>Sample # 1 = 5 9 7 
-Sample # 2 = 5 3 7 
-Sample # 3 = 1 5 7 
-Sample # 4 = 9 5 7 
-Sample # 5 = 3 3 9 </code></pre>
+<pre><code>Sample # 1 = 9 5 1 
+Sample # 2 = 1 9 3 
+Sample # 3 = 5 9 1 
+Sample # 4 = 5 3 9 
+Sample # 5 = 7 9 9 </code></pre>
 <ul>
 <li>You can also set specific probabilities for the numbers if you are interested in running a casino.</li>
 </ul>
@@ -105,11 +105,11 @@ Sample # 5 = 3 3 9 </code></pre>
                         prob = c(0.1,0.1,0.1,0.1,0.6))
   cat(&quot;Sample #&quot;,index,&quot;=&quot;,sample.temp, &quot;\n&quot;)
 }</code></pre>
-<pre><code>Sample # 1 = 9 5 5 
-Sample # 2 = 9 9 5 
-Sample # 3 = 7 9 9 
-Sample # 4 = 9 9 9 
-Sample # 5 = 3 9 9 </code></pre>
+<pre><code>Sample # 1 = 5 9 9 
+Sample # 2 = 9 5 9 
+Sample # 3 = 9 9 9 
+Sample # 4 = 9 3 1 
+Sample # 5 = 5 9 9 </code></pre>
 <ul>
 <li>Note that the sample function also works for strings as well. This will come in handy when we have to simulate genotype values later in the course.</li>
 </ul>
@@ -117,7 +117,7 @@ Sample # 5 = 3 9 9 </code></pre>
        size= 10, 
        replace = TRUE,
        prob = c(0.3,0.3,0.2,0.2))</code></pre>
-<pre><code> [1] &quot;T&quot; &quot;A&quot; &quot;C&quot; &quot;A&quot; &quot;A&quot; &quot;T&quot; &quot;G&quot; &quot;C&quot; &quot;A&quot; &quot;A&quot;</code></pre>
+<pre><code> [1] &quot;G&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;G&quot; &quot;A&quot; &quot;G&quot; &quot;A&quot; &quot;A&quot; &quot;T&quot;</code></pre>
 <ul>
 <li>It is sometimes very useful to generate the exact same results from processes that involve random numbers. You can check if your code is doing the right thing, and if not you can probably find out where it is wrong. We can set a seed, which is used as a reference point to generate random numbers, to generate identical not-so-random-anymore numbers.</li>
 </ul>
@@ -163,14 +163,14 @@ QG16_Lab5_file_5.txt </code></pre>
 <h3>Exercise - The Sampling Distribution of the Mean and P values</h3>
 <p><strong>Part 1</strong></p>
 <ul>
-<li><p>Create 100 samples from a normal distribution with a sample size of 50, <span class="math">\(\mu = 0\)</span>, and <span class="math">\(\sigma = 1\)</span>.</p></li>
+<li><p>Create 100 samples from a normal distribution with a sample size of 50, mean = 0, and sd = 1.</p></li>
 <li><p>For each sample calculate the mean and save it to a vector.</p></li>
 <li><p>Plot the density for the sample means (there should be 100 sample means) and calculate the mean and standard deviation of this distribution.</p></li>
 </ul>
 <p><strong>Part 2</strong></p>
 <ul>
 <li><p>Use pnorm() to calculate p-values for each sample mean using the sampling distribution of the mean, which should have slightly different parameters compared to the original distribution.</p></li>
-<li><p>Plot a histogram for the p-value distribution, and show the number of times where we reject the null hypothesis ( <span class="math">\(\mu =0\)</span> ) with a threshold of <span class="math">\(\alpha = 0.05\)</span> and print it out. Keep in mind that in this case we are testing if the mean is <strong>different</strong> from 0, not larger or smaller.</p></li>
+<li><p>Plot a histogram for the p-value distribution, and show the number of times where we reject the null hypothesis ( mean = 0 ) with a threshold of alpha = 0.05 and print it out. Keep in mind that in this case we are testing if the mean is <strong>different</strong> from 0, not larger or smaller.</p></li>
 </ul>
 <p><strong>Part 3</strong></p>
 <ul>
