@@ -1,0 +1,168 @@
+---
+author: "Jinhyun Ju"
+output: html_document
+---
+
+Quantitative Genomics and Genetics 2016
+======
+
+Computer Lab 6
+------
+
+-- 10 March 2016
+
+-- Author: Jin Hyun Ju (jj328@cornell.edu)
+
+```{r, comment = NA, echo = FALSE}
+set.seed(1300)
+```
+
+### 1. Genotype Data Handling
+
+```{r, comment = NA, echo = FALSE}
+set.seed(20160310)
+
+
+genotype_simulator <- function(N, MAF = NULL){
+    nucleotides <- c("A","T","G","C")
+    
+    if(is.null(MAF)){
+        MAF <- runif(1, min = 0, max = 0.5)
+    }
+    
+    loci <- sample(nucleotides, 2, replace = FALSE)
+    geno_vec <- sample(loci, 
+                     size = 2 * N, 
+                     prob = c(MAF, 1-MAF), 
+                     replace = TRUE)
+    geno_mx <- matrix(geno_vec, nrow = N, ncol = 2)
+    return(geno_mx)
+} 
+
+genotype_matrix_creator <- function(n_sample, n_geno){
+    
+    multi_geno_mx <- matrix(NA, nrow = n_sample, ncol = 2 * n_geno)
+    
+    for( i in 1:n_geno){
+        start_idx <- 2*i -1
+        end_idx <- 2*i
+        multi_geno_mx[,start_idx:end_idx] <- genotype_simulator(N = n_sample)   
+    }
+    return(multi_geno_mx)
+}
+
+sim_geno_mx <- genotype_matrix_creator(100, 200)
+
+rownames(sim_geno_mx) <- paste0("sample", 1:nrow(sim_geno_mx))
+colnames(sim_geno_mx) <- paste0("geno", 1:ncol(sim_geno_mx))
+
+write.csv(sim_geno_mx, file = "./genotype_data.csv")
+
+
+```
+
+- We began to cover genome wide association analyses (GWAS) in class and this lab will cover the basic data handling practices in GWAS.
+
+- The two major types of data you are going to be dealing with in GWAS are genotypes (sequence variants) and phenotypes (qualitative or quantitative).
+
+- Let's begin with some genotype data. 
+
+**Exercise 1**
+
+- Read in the data saved in the genotype data file.
+
+```{r, comment = NA, eval = FALSE}
+geno_import <- read.csv("./genotype_data.csv", 
+                      header = TRUE, 
+                      stringsAsFactors = FALSE,
+                      row.names = 1)
+```
+
+- This file contains SNP information for N individuals and G positions. Each pair of columns will have SNPs for a given position (one for each chromosome). For example, if the first row has "A" in column 1 and "T" in column 2 this individual has a genotype of "AT" for the first position.
+
+- Can you tell me how many samples and how many genotype positions there are?
+
+- Can you identify a problem with the data, and guess why this happens?
+
+```{r, echo = FALSE, eval = FALSE}
+# There should be 100 samples and 400 genotype columns (meaning 200 genotype positions)
+
+# If you read the data in with the following function call 
+# column 22 and 76 and 276 will have TRUE instead of T saved
+
+```
+
+
+```{r, comment = NA, echo = FALSE, eval = TRUE}
+
+# We can specify the column classes to character
+geno_import <- read.csv("./genotype_data.csv", 
+                      header = TRUE, 
+                      stringsAsFactors = FALSE,
+                      row.names = 1, colClasses = "character")
+
+# to avoid T being interpreted as TRUE, we can project the characters to lower case
+geno_import <- apply(geno_import, 2, tolower)
+
+```
+
+
+**Exercise 2**
+
+- Now that we have loaded the data into R, we would like to prepare it for analysis. 
+
+- Since we cannot really use the genotypes as they are at the moment, we would first want to convert them into numbers. 
+
+- In class we learned two methods for creating genotype dummy variables, the additive version (Xa) and the dominance version (Xd).
+
+```{r ,echo = FALSE,fig.show='hold',  fig.width=6, fig.height=2, fig.align='center'}
+library(png)
+library(grid)
+
+img <- readPNG("./Xa_Xd_coding.png")
+grid.raster(img)
+
+```
+
+- How would you convert the character matrix of individual SNPs into dummy variables?
+
+```{r, comment = NA, eval = TRUE, echo = FALSE}
+
+xa_converter <- function(geno_in){
+    geno_count <- table(geno_in)
+    minor_allele <- names(geno_count[geno_count == min(geno_count)])
+    xa_code <- ifelse(geno_in == minor_allele, 1,0)
+    xa_result <- rowSums(xa_code) - 1
+    return(xa_result)
+}
+
+xa_matrix <- matrix(NA, 
+                    nrow = nrow(geno_import), 
+                    ncol = ncol(geno_import)/2)
+
+for (i in 1:(ncol(geno_import)/2)){
+    xa_matrix[,i] <- xa_converter(geno_import[,c(2*i -1, 2*i)])  
+}
+
+```
+
+**Exercise 3**
+
+- Calculate the Xd values for the genotypes.
+
+- If we need both Xa and Xd everytime, how would you generate the Xd values?
+
+```{r, comment = NA, echo = FALSE}
+
+xd_matrix <-  1 - 2*abs(xa_matrix)
+
+```
+
+**Exercise 4**
+
+- Now that we have inspected sample genotype data, can you create a function that simulates genotypes?
+
+- Your function should take number of samples and number of genotypes as an input and generate a genotype matrix like the one you've read into R.
+
+
+
