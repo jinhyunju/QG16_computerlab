@@ -77,15 +77,17 @@ img {
 </ul>
 <p><strong>Exercise 1</strong></p>
 <ul>
-<li><p>Read in the data saved in the genotype data file.</p></li>
-<li><p>This file contains SNP information for N individuals and G positions. Each pair of columns will have SNPs for a given position (one for each chromosome). For example, if the first row has “A” in column 1 and “T” in column 2 this individual has a genotype of “AT” for the first position.</p></li>
-<li><p>Can you tell me how many samples and how many genotype positions there are?</p></li>
-<li><p>Can you identify a problem with the data, and guess why this happens?</p></li>
+<li>Read in the data saved in the genotype data file.</li>
 </ul>
 <pre class="r"><code>geno_import &lt;- read.csv(&quot;./genotype_data.csv&quot;, 
                       header = TRUE, 
                       stringsAsFactors = FALSE,
                       row.names = 1)</code></pre>
+<p>git - This file contains SNP information for N individuals and G positions. Each pair of columns will have SNPs for a given position (one for each chromosome). For example, if the first row has “A” in column 1 and “T” in column 2 this individual has a genotype of “AT” for the first position.</p>
+<ul>
+<li><p>Can you tell me how many samples and how many genotype positions there are?</p></li>
+<li><p>Can you identify a problem with the data, and guess why this happens?</p></li>
+</ul>
 <p><strong>Exercise 2</strong></p>
 <ul>
 <li><p>Now that we have loaded the data into R, we would like to prepare it for analysis.</p></li>
