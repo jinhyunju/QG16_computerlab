@@ -156,9 +156,137 @@ xd_matrix <-  1 - 2*abs(xa_matrix)
 
 **Exercise 4**
 
-- Now that we have inspected sample genotype data, can you create a function that simulates genotypes?
+- Now that we have Xa and Xd codings for genotypes we can test their association with phenotypes.
 
-- Your function should take number of samples and number of genotypes as an input and generate a genotype matrix like the one you've read into R.
+- In this example we are going to use two continuous phenotypes. 
 
+```{r, comment = NA, echo = FALSE}
+set.seed(20162)
+sim_pheno_mx <- matrix(c(rnorm(100, 0, sd = 2), (xa_matrix[,150] * 1.2 + rnorm(100))),nrow = 100, ncol = 2) 
+
+rownames(sim_pheno_mx) <- paste0("sample", 1:nrow(sim_pheno_mx))
+colnames(sim_pheno_mx) <- paste0("pheno", 1:ncol(sim_pheno_mx))
+
+write.csv(sim_pheno_mx, file = "./phenotype_data.csv")
+
+
+```
+
+```{r, comment = NA, echo = TRUE}
+
+sim_pheno_mx <- read.csv("./phenotype_data.csv", 
+                     header = TRUE, row.names = 1)
+
+```
+
+- Before we jump into the analysis a good idea might be filtering genotypes with a very low minor allele frequency. Filter out any genotypes with MAF lower than 0.1 (this will include genotypes with a single value).
+
+```{r, comment = NA, echo = FALSE}
+
+xa_maf_calc <- xa_matrix + 1
+
+MAF <- apply(xa_maf_calc, 2, function(x) sum(x) / (length(x) * 2))
+
+xa_filter <- xa_matrix[,which(MAF > 0.1 & MAF < 0.5)]
+xd_filter <- xd_matrix[,which(MAF > 0.1 & MAF < 0.5)]
+
+```
+
+- Using the pseudo code below generate a function that will return a p-value for the case where the null hypothesis is betas for Xa and Xd are 0, and the alternative hypothesis is that one or both of the betas are not zero. 
+
+- You may only use lm() to test if the results you get are correct not for the actual calculations. 
+
+- Use the function ginv() from the "MASS" package instead of solve() to calculate the invese of a matrix.
+
+
+```{r, eval = FALSE}
+
+# The pseudo code for this task
+
+MLE.beta <- calculate MLE.beta 
+y.hat <- calculate the estimated values of y given the MLE>beta values
+
+SSM <- calculate SSM
+SSE <- calculate SSE
+ 
+df.M <- ?
+df.E <- ?
+
+MSM <- calculate MSM
+MSE <- calculate MSE
+
+Fstatistic <- MSM / MSE
+
+pf(Fstatistic, df.M,df.E,lower.tail =FALSE)
+
+```
+
+```{r ,echo = FALSE,fig.show='hold',  fig.width=12, fig.height=8, fig.align='center'}
+library(png)
+library(grid)
+
+img <- readPNG("./Equations_lab_6.png")
+grid.raster(img)
+
+```
+
+
+```{r, comment = NA, echo = FALSE, results='hide'}
+library(MASS)
+
+pval_calculator <- function(pheno_input, xa_input, xd_input){
+    n_samples <- length(xa_input)
+
+    X_mx <- cbind(1,xa_input,xd_input)
+    
+    MLE_beta <- ginv(t(X_mx) %*% X_mx) %*% t(X_mx) %*% pheno_input
+    y_hat <- X_mx %*% MLE_beta
+  
+    SSM <- sum((y_hat - mean(pheno_input))^2)
+    SSE <- sum((pheno_input - y_hat)^2)
+  
+    df_M <- 2
+    df_E <- n_samples - 3 
+  
+    MSM <- SSM / df_M
+    MSE <- SSE / df_E
+  
+    Fstatistic <- MSM / MSE 
+  
+    # to check if it is correct 
+    pval <- pf(Fstatistic, df_M, df_E,lower.tail = FALSE)
+
+    return(pval)
+}
+
+n_geno <- ncol(xa_filter)
+pval_mx <- matrix(NA, nrow = n_geno, ncol = 2)
+
+for (j in 1 : 2) {
+  
+    for (i in 1 : n_geno){
+
+        cat("Testing Phenotype = ", j, "/ Gentoype = ", i, "\n")      
+        pval_mx[i,j] <- pval_calculator(sim_pheno_mx[,j], xa_input = xa_filter[,i], xd_input = xd_filter[,i])
+
+    }
+  
+  
+}
+
+
+```
+
+
+- If everything works, you should get something like this...
+
+```{r, comment = NA, echo = FALSE}
+
+cat("Range of pvalues for first phenotype \n")
+range(pval_mx[,1])
+
+cat("Range of pvalues for second phenotype \n")
+range(pval_mx[,2])
+```
 
 
