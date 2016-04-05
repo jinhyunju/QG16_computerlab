@@ -15,7 +15,7 @@ Computer Lab 7
 
 ### 1. Logistic Regression
 
-In logistic regression, the dependent variable y (in our case phenotype) is categorical instead of continuous. Specifically, we are going to implement logistic regression method that deals with binary phenotypes coded as 0 and 1. For example, in genome-wide association studies (GWAS) a healthy or normal control phenotype would be 0 and a disease phenotype (ex. diabetes, alzheimers, etc ...) would be 1. The goal is to identify genomic variations that increase the probability of belonging to the disease category. 
+In logistic regression, the dependent variable y (in our case phenotype) is categorical instead of continuous. Specifically, we are going to use logistic regression to deal with binary phenotypes coded as 0 and 1. For example, in genome-wide association studies (GWAS) a healthy or normal control phenotype would be 0 and a disease phenotype (ex. diabetes, alzheimers, etc ...) would be 1, and the goal is to identify genomic variations that increase the probability of belonging to the disease category. 
 
 You might be wondering why we need this in the first place. So let's try to use linear regression for a binary phenotype and see what happens. 
 
@@ -36,9 +36,7 @@ curve(predict(linear_model, data.frame(Xa=x), type="response"), add=TRUE, col = 
 
 - If you plot out the residuals, how would it look like?
 
-- What would be a good rule to deal with cases where the predicted values are greater or smaller than our sample space?
-
-It becomes quite clear that we need a better alternative to linear regression for binary phenotypes. You can think of logistic regression as a transformation of the linear model to "fit" the binary phenotypes. 
+It becomes quite clear that we need a better alternative to linear regression for binary phenotypes. Simply put, logistic regression transforms the linear model that we use to "fit" the binary phenotypes. The logistic function takes the form as follows:
 
 ```{r ,echo = FALSE,fig.show='hold',  fig.width=3, fig.height=1, fig.align='center'}
 library(png)
@@ -48,6 +46,8 @@ img <- readPNG("./logistic_function.png")
 grid.raster(img)
 ```
 
+If we now take t as the linear function that depends on our x values, the logistic function that we use becomes
+
 ```{r ,echo = FALSE,fig.show='hold',  fig.width=3, fig.height=1, fig.align='center'}
 
 img2 <- readPNG("./logistic_function2.png")
@@ -55,15 +55,20 @@ grid.raster(img2)
 
 ```
 
-A simple visualization in R might give us a better idea of how the curve behaves:
+A simple visualization in R might give us a better idea of how the data is transformed. Basically, logistic regression confines the original dependent values within the range of 0 and 1. 
 
-```{r, echo = TRUE, fig.show='hold',  fig.width=4, fig.height=4, fig.align='center' }
+```{r, echo = TRUE, fig.show='hold',  fig.width=8, fig.height=4, fig.align='center' }
+x <- seq(-1,1,by = 0.1)
+y_linear <- x * 4
+y_logistic <- 1 / ( 1 + exp(-y_linear))
 
-x <- seq(from=-10,to=10,by = 0.1)
-y <- 1 / (1+exp(-x))
-
-plot(x,y, main = "logistic regression curve", type ="b")
-
+par(mfrow = c(1,2))
+plot(x, y_linear, main = "Linear function", type = "l")
+abline(h = 0, col = "red", lty = 2)
+abline(h = 1, col = "red", lty = 2) 
+plot(x,y_logistic, main = "logistic regression curve", type ="l", ylim = c(-0.5,1.5))
+abline(h = 0, col = "red", lty = 2)
+abline(h = 1, col = "red", lty = 2)
 ```
 
 Let's project the settings in our problem onto the above equation and clarify our goal. We have a given phenotype that takes either a value of 1 or 0, and two matrices for genotypes in the form of Xa(-1,0,1) coding and Xd(-1,1) coding. Just like in linear regression, the goal is to find the values for $\beta_{\mu}$, $\beta_a$ and $\beta_d$ for each genotype that best explain the relationship between the genotype and phenotype. If the relationship was error free and the genotype value directly predicts the phenotype, we would not need logistic regression (For example, if A2A2 indicates phenotype = 1 with 100% certainty). However, that is more than often not the case in real world genetics/genomics so we would have to "soft" model the relationship between genotypes and phenotypes by using probabilities, (In other words, A2A2 has a higher chance of having phenotype=1 than phenotype=0) and that is what the transformation given in the above equation is doing. So you might ask why do we need an algorithm to solve this problem if it is taking almost the exact same form as linear regression? The reason why we need an algorithm to calculate the maximum likelihood estimators for logistic regression is because there is no "closed-form" solution. In linear regression we had a "closed-form" solution which took the form of $MLE(\hat{\beta})=(XX^T)^{-1}X^TY$, but due to the transformation we are using in logistic regression we don't have such a simple solution in this case. So we are taking an "iterative" approach where the algorithm starts at a given point and keeps looking for a better solution in following steps until the better solution is almost identical to the solution from the previous step. 
