@@ -251,7 +251,7 @@ pval_calculator <- function(pheno_input, xa_input, xd_input){
     MSM <- SSM / df_M
     MSE <- SSE / df_E
   
-    Fstatistic <- MSM / MSE 
+    Fstatistic <- MSM / MSE
   
     # to check if it is correct 
     pval <- pf(Fstatistic, df_M, df_E,lower.tail = FALSE)

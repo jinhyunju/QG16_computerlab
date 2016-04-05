@@ -4,11 +4,10 @@ Quantitative Genomics and Genetics 2016 Spring
 
 ### Material For This Week
 
-### Lab 6 - [Notes](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab6/QG16_computerlab6.html "Lab6")
+### Lab 7 - [Notes](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab7/QG16_computerlab7.html "Lab7")
 ---
 
-* Handling genotype data 
-
+* Logistic Regression
 
 ## Computer Lab Material 
 
@@ -49,4 +48,10 @@ Quantitative Genomics and Genetics 2016 Spring
 ---
 
 * Handling genotype data 
+
+### Lab 7 - [Notes](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab7/QG16_computerlab7.html "Lab7")
+---
+
+* Logistic Regression
+
 
