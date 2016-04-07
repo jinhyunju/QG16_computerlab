@@ -22,7 +22,7 @@ You might be wondering why we need this in the first place. So let's try to use 
 ```{r ,echo = FALSE,fig.show='hold',  fig.width=4, fig.height=4, fig.align='center'}
 # This simulation is for demonstration purpose only, you should not simulate logistic regression results in this way. 
 xa <- sample(c(-1,0,1), 100, replace = TRUE)
-y <- 1* (xa * 0.7 + rnorm(100,0,1) > 0)
+y <- 1* (xa * 1.7 + rnorm(100,0,2) > 0)
 
 test_data <- data.frame("pheno" = y, "Xa" = xa)
 linear_model <- lm(pheno ~ Xa, data=test_data)
@@ -108,62 +108,60 @@ grid.raster(img3)
 5) Your output should look something like this :
 
 ```{r, comment = NA, echo = TRUE,eval = FALSE, fig.align='center', fig.width=7,fig.height=4}
-logistic.IRLS<- function(Xa,Xd,Y =Y, beta.initial.vec = c(0,0,0), d.stop.th = 1e-6, it.max = 100) {
 
-  #Create the X matrix
-  X.mx <- Just like linear regression
-  
-  N <- # get the sample size
+W_calc <- function(gamma_inv){
+     
+    return(W)
+}
+
+beta_update <- function(X_mx, W, Y, gamma_inv, beta){
+
+	return(beta_up)
+}
+
+gamma_inv_calc <- function(X_mx, beta_t){
+
+    return(gamma_inv)
+}
+
+dev_calc <- function(Y, gamma_inv){
+
+    return(deviance)
+}
+
+loglik_calc <- function(Y, gamma_inv){
+
+    return(loglik)
+}
+
+
+logistic.IRLS<- function(Xa,Xd,Y = Y, beta.initial.vec = c(0,0,0), d.stop.th = 1e-6, it.max = 100) {
     
-  # initializing beta.t parameters for t = 0
-  beta.t <- beta.initial.vec
-  
-  # initialize deviance at t =0
-    dt < -0
+    # Create Initial values
     
-    #initialize gamma
-  # K is the part which goes into the exponent
-    K <- calculate the part that goes into the exponent
   
-  # calculate the gamma_inverse
-    gamma_inv <- # exp() / 1+ exp()
-    
+    # Start of optimization loop
     for(i in 1:it.max) {
-    # store the previous deviance 
-        dpt1<-dt 
-        
-    # create empty matrix W
-        W<-matrix(0,N,N)
-    
-    # Fill in the diagonal of W with appropriate values
-        for(j in 1:N){
-            W[j,j] <- # look up the useful equations to figure out what goes in here
-        }
-    
-    
-        beta.t <- # calculate the updated value for beta.t
-        
-        #update gamma since it's a function of beta
-        K <- # New K
-        gamma_inv <- # new gamma_inv
+         
+        # calculate W
       
-        #calculate new deviance
-        dt <- # Find equation in useful equations 
-    # Note that one part of the deviance Y * log(Y/gamma_inv) or (1-Y)*log(1-Y/gamma_inv) for each Y will take the form of -Inf and might cause an error.
-    # Specifying which Y should go into which part of the calculation is needed to avoid this.
-        
-        absD <- # absolute difference in deviance
-        
-        if(absD < d.stop.th) {
+        # update beta
+      
+        # update gamma_inv
+      
+        # calculate deviation
+      
+        # check if deviation is smaller than threshold
+        if() {
             cat("Convergence at iteration:", i, "at threshold:", d.stop.th, "\n")
             logl<-# Log likelihood goes here
-            return(list(beta.t,logl)) # return a list that has beta.t and logl saved
+            return(list(beta_t,logl)) # return a list that has beta.t and logl saved
         }   
     }
   
-  # In case the algorithm did not coverge
+    # In case the algorithm did not coverge
     cat("Convergence not reached after iteration:", i, "at threshold:", d.stop.th, "\n")
-    return(list(beta.t= c(NA,NA,NA),logl=NA)) # return NA values 
+    return(list(beta_t= c(NA,NA,NA),logl=NA)) # return NA values 
 }
 
 
@@ -176,9 +174,6 @@ for(j in 1:G){
   logl<- # How do we extract an element from a list? might want to use [[]]
 
 }
-
-
-
 
 beta.mu.null<- # what is the beta.mu for the null hypothesis?
 
@@ -204,77 +199,78 @@ abline(-log10(0.05/300),0,col="red")
 ```{r, comment = NA, echo = FALSE,eval = TRUE, fig.align='center', fig.width=7,fig.height=4}
 library(MASS)
 library(ggplot2)
-# QG lab 7
-sim.logistic.dat <- function(Xa,Xd,beta){
-  # create X matrix and beta vector
 
-  X <- cbind(1,Xa,Xd)
-  # Calculate E(Y|X)
-  EY <- exp( X %*% beta) / (1+ exp(X %*% beta))
-  
-  # Calculate error
-  epsilon <- apply(EY,1,function(a) rbinom(1,1,a) - a)
-#  epsilon <- NULL
-#  for (i in 1:n){
-#    epsilon.i <- rbinom(1,1,EY[i]) - EY[i]
-#    epsilon <- c(epsilon, epsilon.i)
-#  }
-  Y <- EY + epsilon
-#  Y.j <- EY + epsilon.j
-  
-  return(Y)
+W_calc <- function(gamma_inv){
+    N <- length(gamma_inv)
+		W<-diag(as.vector(gamma_inv * (1- gamma_inv)))
+      
+    return(W)
 }
 
+beta_update <- function(X_mx, W, Y, gamma_inv, beta){
+  beta_up <- beta + ginv(t(X_mx)%*%W%*%X_mx)%*%t(X_mx)%*%(Y-gamma_inv)
+	return(beta_up)
+}
+
+gamma_inv_calc <- function(X_mx, beta_t){
+    #initialize gamma
+    # K is the part which goes into the exponent
+    K <- X_mx %*% beta_t
+    gamma_inv <- exp(K)/(1+exp(K))
+    return(gamma_inv)
+}
+
+dev_calc <- function(Y, gamma_inv){
+    deviance <- 2*( sum(Y[Y==1]*log(Y[Y==1]/gamma_inv[Y==1])) + sum((1-Y[Y==0])*log((1-Y[Y==0])/(1-gamma_inv[Y==0]))) )  
+    return(deviance)
+}
+
+loglik_calc <- function(Y, gamma_inv){
+    loglik <- sum(Y*log(gamma_inv)+(1-Y)*log(1-gamma_inv))
+    return(loglik)
+}
 
 logistic.IRLS<- function(Xa,Xd,Y =Y, beta.initial.vec = c(0,0,0), d.stop.th = 1e-6, it.max = 100) {
 
   #Create the X matrix
-  X.mx <- cbind(1, Xa, Xd)
+  X_mx <- cbind(1, Xa, Xd)
   
-  N <- dim(X.mx)[1]
-  	#check this matrix:
+  #check this matrix:
 	#initialize the beta parameter vector at t=0
-	beta.t <- beta.initial.vec
+	beta_t <- beta.initial.vec
   
   # initialize deviance at d[t]
-	dt<-0
+	dt <- 0
 	
 	#initialize gamma
   # K is the part which goes into the exponent
-	K<-X.mx %*% beta.t
-	gamma_inv<-exp(K)/(1+exp(K))
+  gamma_inv <- gamma_inv_calc(X_mx, beta_t)
 	
 	for(i in 1:it.max) {
-		dpt1<-dt #store previous deviance
+		dpt1 <- dt #store previous deviance
 		
     # create empty matrix W
-		W<-matrix(0,N,N)
+		W <- W_calc(gamma_inv)
     
-    # Fill in the diagonal of W with appropriate values
-		for(j in 1:N){
-			W[j,j] <- gamma_inv[j] * (1-gamma_inv[j])
-		}
-    
-    
-		beta.t <- beta.t + ginv(t(X.mx)%*%W%*%X.mx)%*%t(X.mx)%*%(Y-gamma_inv)
+		beta_t <- beta_update(X_mx, W, Y, gamma_inv, beta_t)
 		
 		#update gamma since it's a function of beta
-		K <- X.mx %*% beta.t
-		gamma_inv <- exp(K)/(1+exp(K))
+		
+		gamma_inv <- gamma_inv_calc(X_mx, beta_t)
 
 		#calculate new deviance
-		dt <- 2*( sum(Y[Y==1]*log(Y[Y==1]/gamma_inv[Y==1])) + sum((1-Y[Y==0])*log((1-Y[Y==0])/(1-gamma_inv[Y==0]))) )
+		dt <- dev_calc(Y, gamma_inv)
 		
 		absD <- abs(dt - dpt1)
 		
 		if(absD < d.stop.th) {
 			#cat("Convergence at iteration:", i, "at threshold:", d.stop.th, "\n")
-			logl<-sum(Y*log(gamma_inv)+(1-Y)*log(1-gamma_inv))
-			return(list(beta.t,logl))
+			logl <- loglik_calc(Y, gamma_inv)
+			return(list(beta_t,logl))
 		}	
 	}
 	#cat("Convergence not reached after iteration:", i, "at threshold:", d.stop.th, "\n")
-	return(list(beta.t= c(NA,NA,NA),logl=NA))
+	return(list(beta_t= c(NA,NA,NA),logl=NA))
 }
 
 
@@ -284,15 +280,15 @@ geno <- read.table("./QG16_Lab7_genotypes.tsv", header = T)
 
 Y <- as.matrix(Y)
 colnames(Y) <- NULL
-Xa <- as.matrix(geno)
-Xd <- 1 - 2*abs(Xa)
+xa_matrix <- as.matrix(geno)
+xd_matrix <- 1 - 2*abs(xa_matrix)
 
 
 
 beta<-NULL
 logl<-NULL
-for(j in 1:dim(Xa)[2]){
-	myList<-logistic.IRLS(Xa[,j],Xd[,j],Y=Y)
+for(j in 1:dim(xa_matrix)[2]){
+	myList<-logistic.IRLS(xa_matrix[,j],xd_matrix[,j],Y=Y)
 	beta<-cbind(beta,myList[[1]])
 	logl<-c(logl,myList[[2]])
 #	cat("Locus ",j,"'s beta values: ",myList[[1]],"\n")
@@ -322,7 +318,7 @@ i <- 180
 
 
 par(mfrow = c(1,2))
-plot.df <- data.frame( "pheno" = Y, "Xa" = Xa[,i], "Xd" = Xd[,i])
+plot.df <- data.frame( "pheno" = Y, "Xa" = xa_matrix[,i], "Xd" = xd_matrix[,i])
 plot(jitter(plot.df$Xa, .4), jitter(plot.df$pheno, .4), xlab = "Xa", ylab = "Y")
 plot(jitter(plot.df$Xd, .4), jitter(plot.df$pheno, .4), xlab = "Xd", ylab = "Y")
 
