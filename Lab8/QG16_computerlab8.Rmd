@@ -17,7 +17,11 @@ Computer Lab 8
 
 One of the biggest challenges in dealing with gene expression or genotype data is the high dimensionality of the data. Transcriptome wide gene expression datasets usally have 10,000 + gene expression levels measured and commonly used genotype datasets have around 600,000 ~ 900,0000 dimensions. The high dimensionalities not only make it difficult to perform statistical analyses on the data, but also make it hard to visualize and inspect the data. Today we will learn how to use Principal component analysis (PCA) to deal with this problem. 
 
-For a more detailed and intuitive explanation on PCA, I highly recommend the tutorial written by Jonathon Shlens: http://arxiv.org/pdf/1404.1100.pdf
+For a more detailed explanation on PCA, you can take a look at this version:
+https://github.com/jinhyunju/QG16_computerlab/raw/master/Lab8/Principal_component_analysis_JinhyunJu.pdf
+
+I also highly recommend the tutorial written by Jonathon Shlens: 
+http://arxiv.org/pdf/1404.1100.pdf
 
 #### PCA in R
 
