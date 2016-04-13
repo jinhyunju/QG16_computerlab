@@ -1,0 +1,185 @@
+---
+author: "Jinhyun Ju"
+output: html_document
+---
+
+Quantitative Genomics and Genetics 2016
+======
+
+Computer Lab 8
+------
+
+-- 14 April 2016
+
+-- Author: Jin Hyun Ju (jj328@cornell.edu)
+
+### 1. Principal Component Analysis
+
+One of the biggest challenges in dealing with gene expression or genotype data is the high dimensionality of the data. Transcriptome wide gene expression datasets usally have 10,000 + gene expression levels measured and commonly used genotype datasets have around 600,000 ~ 900,0000 dimensions. The high dimensionalities not only make it difficult to perform statistical analyses on the data, but also make it hard to visualize and inspect the data. Today we will learn how to use Principal component analysis (PCA) to deal with this problem. 
+
+For a more detailed and intuitive explanation on PCA, I highly recommend the tutorial written by Jonathon Shlens: http://arxiv.org/pdf/1404.1100.pdf
+
+#### PCA in R
+
+Let's begin with a simple case where we have two measured variables x and y which are generated like this: 
+
+```{r, comment = NA, echo = FALSE}
+
+set.seed(1987)
+
+```
+
+```{r , comment = NA, fig.align='center'}
+
+x <- 2 + rnorm(300,0,1)
+y <- 0.5 + 1*x + rnorm(300,0,1)
+
+example.data <- cbind(x,y)
+plot(example.data[,1],example.data[,2])
+
+```
+
+We can see that x and y are heavily correlated, which is not very surprising since the value of y was generated based on the value of x. In this case we don't really need to reduce the dimensions since a 2-D plot is easy to generate. However, for the sake of demonstration (and the lack of ability to plot 4 or 5 dimensional data) let us try to reduce this 2 dimensional dataset into a single dimension without losing too much information. The most valuable information in this dataset is probably the correlation between x and y (since there is not much left if you take that relationship out... just normal errors). So it seems like a good idea to keep that information in the single dimension that we have. Let's first center our data to (0,0) to make it easier to draw vectors. 
+
+
+```{r , comment = NA, fig.align='center'}
+example.data.center <- scale(example.data, center = TRUE, scale = FALSE)
+plot(example.data.center[,1], example.data.center[,2],xlim = c(-5,5), ylim = c(-5,5))
+arrows(x0=0, y0=0, x1 = 1, y1 = 0, col = "red", lwd = 3,length =0.15)
+arrows(x0=0, y0=0, x1 = 0, y1 = 1, col = "red", lwd = 3,length =0.15)
+
+```
+
+So right now the data is represented by the coordinates of x and y, and the basis vectors are (1,0) and (0,1) shown as the red arrows. In order to capture the relationship between x and y and representing the data in 1-D we would probably use a vector that goes along the diagonal of the data. The direction along the diagonal explains the the largest amount of variance in the data (has the largest spread along its direction) and if we project each data point onto this vector we wont be losing too much information about the relationship between x and y. Let's find out the exact direction of that vector by using pca in R. There are two functions in R that are commonly used to perform pca: prcomp() and princomp(). Although they are doing the same thing, they use slightly different methods to calculate the outcomes and prcomp() happens to use the method that is faster and is computationally less expensive. So let's use prcomp() to do our calculations.
+
+```{r, comment = NA}
+
+# when you use prcomp, your input data should have measrued variables in columns and individual samples/points as rows (N samples x G genes (genotypes))
+pca.result <- prcomp(example.data.center)
+
+```
+
+That was easy, but what is saved in the result?
+
+```{r, comment = NA}
+
+str(pca.result)
+
+```
+
+You can see that there are 5 different results saved in the variable pca.result. 
+
+
+```{r, comment = NA, fig.align='center'}
+#$sdev contains information about the fraction of variation explained by a certain principal component.
+pca.result$sdev
+
+(pca.result$sdev / sum(pca.result$sdev))*100
+```
+
++ What is shown here is the percentage of variance explained by each principal component. This means that the first PC explains ~74% of the variation in the data, and the second component explains about 26% of the variation and so on. 
+
+
+```{r, comment = NA, fig.align='center', fig.height=5, fig.width=5}
+#$rotation contains the directions of principal components in each of its columns.
+pca.result$rotation
+
+plot(example.data.center[,1], example.data.center[,2],xlim = c(-5,5), ylim = c(-5,5))
+arrows(x0=0, y0=0, x1 = pca.result$rotation[1,1], y1 = pca.result$rotation[2,1], col = "red", lwd = 2,length =0.15)
+arrows(x0=0, y0=0, x1 = pca.result$rotation[1,2], y1 = pca.result$rotation[2,2], col = "red", lwd = 2,length =0.15)
+```
+
++ We can see that the first PC is the direction along the diagonal.
+
+```{r, comment = NA, fig.align='center'}
+#$center contains the mean for each data column (in our case it would be close or equal to 0 since we centered the data). 
+pca.result$center
+
+#$scale contains information about whether or not we gave the option to scale (divide it by its standard deviation) the data. 
+pca.result$scale
+
+#$x contains the coordinate values of the data projected to a principal component in each of its columns.
+plot(pca.result$x[,1],pca.result$x[,2],xlim = c(-5,5), ylim = c(-5,5))
+
+```
+
+You can see that the representation of the data looks like a rotation using the diagonal of the original data as the first axis. So if we are interested in only keeping 1-D of the data without losing too much information, our best shot would be to keep the first column of the projected data pca.result$x[,1].
+
+
+### Exercise
+
+- You can find a dataset with 18 gene expression measurements from 462 individuals. Use PCA to see if there is an interesting structure in the dataset. 
+
+- If you find something interesting try to look up the genes on the internet and figure out what might be causing this.
+
+### Extra material: Color labeling points using ggplot. 
+
+When you are visualizing your data it is often useful to color label your points (lines or bars etc...) on the plots according to specific values or groups. For example, if you are trying to merge two datasets from separate experiments it would be a good idea to label your points by their experimental group. Here, we are going to use ggplot to generate such plots. It might seem a bit difficult in the beginning since the over all process for generating the plots is different from the basic plots, but once you get used to it you will probably never look back. 
+
+The usual process of generating a ggplot from your data involves :
+
+1) Turning your data into a dataframe with the appropriate formating of rows and columns
+
+2) Trying to generate the plot that you want
+
+3) Fail / not satisfied with results
+
+4) Google search the thing you are trying to do with ggplot 
+
+5) Find a nice example on Stackoverflow / R cookbook / ggplot documentations
+
+6) Fix error / refine plot
+
+7) Be happy
+
+So don't get frustrated if your plot doesn't look like the plot you want (or the plotting doesn't work) and ask google :) 
+
++ Note that ggplot "only" works with dataframes, so it is very important to turn your data into a data frame before plotting. 
+
+```{r, comment = NA}
+
+# install packages mvtnorm and ggplot2 before you call them (in case you don't already have them)
+library(mvtnorm) # package for generating random numbers from a multivariate gaussian distribution
+library(ggplot2) # awesome plotting package
+
+# creating two data sets from a multivariate gaussian distribution with a different mean exp1(mean = c(1,1)) / exp2(mean = c(-1,1))
+exp1.data <- rmvnorm(50, mean = c(1,1), sigma = diag(2))
+exp2.data <- rmvnorm(50, mean = c(-1,1), sigma = diag(2))
+
+# turning the data sets into a dataframe with labels indicating the experiment number
+exp1 <- data.frame("data1" = exp1.data[,1],"data2" = exp1.data[,2], "label" = "exp1")
+exp2 <- data.frame("data1" = exp2.data[,1],"data2" = exp2.data[,2], "label" = "exp2")
+
+# merging the dataframes 
+merged.data <- merge(exp1, exp2, all = TRUE)
+```
+
+Let's see what the data looks like when we plot them out.
+
+```{r, comment = NA, fig.align='center', fig.show='hold'}
+# calling ggplot with dataframe merged.data and specifying the aesthetics related to the plot (on the x axis = column data1, y axis = column data2) 
+
+# ggplot works with layers, anything added with a + to the ggplot function will generate a layer on top of it
+
+# The geom_point() layer tells ggplot to plot points (= generate a scatter plot)
+# you can also specify options inside geom_point(), for example : geom_point(shape = 8) <- try this
+ggplot(merged.data, aes(x = data1, y = data2)) + geom_point()
+```
+
+It seems like there is no apparent clustering or structured clustering in the data when we plot the points as they are. However, that doesn't seem right since we know that the means used to generate the data are different. Let's color the point by experiment and see what it reveals. 
+
+
+```{r, comment = NA, fig.align='center'}
+# by adding a column name to the aesthetic option col = , we can color the points / bars / lines by the given column
+ggplot(data = merged.data, aes(x = data1, y = data2, col = label)) + geom_point()
+```
+
+The color labels cleary show us that the two data sets are separated by different means. In a real life scenario we might want to do some data cleaning before using the merged data set (or covariate inclusion like we learned in the lecture). We can stop here, but in my point of view the plot is still ugly. So let's use a few options to make the plot prettier. 
+
+```{r, comment = NA, fig.align='center'}
+# size inside geom_point() specifies the size of the points
+# theme_bw() applies a black/white theme to the plot (white background and black text)
+# labs specifies the title, x and y axis labels 
+ggplot(merged.data, aes(x = data1, y = data2, col = label)) + geom_point(size = 3) + theme_bw() + labs(x = "X axis label goes here", y = "Y axis label goes here", title = "Pretty plot") 
+
+```

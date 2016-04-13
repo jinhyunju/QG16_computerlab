@@ -4,10 +4,10 @@ Quantitative Genomics and Genetics 2016 Spring
 
 ### Material For This Week
 
-### Lab 7 - [Notes](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab7/QG16_computerlab7.html "Lab7")
+### Lab 8 - [Notes](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab8/QG16_computerlab8.html "Lab8")
 ---
 
-* Logistic Regression
+* Principal Component Analysis
 
 ## Computer Lab Material 
 
@@ -54,4 +54,7 @@ Quantitative Genomics and Genetics 2016 Spring
 
 * Logistic Regression
 
+### Lab 8 - [Notes](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab8/QG16_computerlab8.html "Lab8")
+
+* Principal Component Analysis
 
