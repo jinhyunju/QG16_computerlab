@@ -4,7 +4,7 @@ Quantitative Genomics and Genetics 2016 Spring
 
 ### Material For This Week
 
-### Lab 8 - [Notes](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab8/QG16_computerlab8.html "Lab8")
+### Lab 8 - [Notes](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab8/QG16_computerlab8.html "Lab8") [Data](https://github.com/jinhyunju/QG16_computerlab/raw/master/Lab8/pca_example_data.csv)
 ---
 
 * Principal Component Analysis
