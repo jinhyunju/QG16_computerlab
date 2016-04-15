@@ -175,13 +175,10 @@ for(j in 1:G){
 
 }
 
-beta.mu.null<- # what is the beta.mu for the null hypothesis?
+# Calculate the log likelihood for the NULL using IRLS
+logl_H0 <- logistic.IRLS(Y=Y, Xa= NULL, Xd=NULL, beta.initial.vec = c(0))[[2]]
 
-# get the gamma_inv for the null hypothesis
-gamma_inv_null<- # calculate the gamma_inv for null
-
-# calculate the log likelihood
-LRT <- # calculate the likelihood ratio test statistic
+LRT<-2*logl-2*logl_H0 #likelihood ratio test statistic
 
 
 pval <- # chi squared test with the following parameters (LRT, 2, lower.tail = F)
@@ -233,7 +230,7 @@ loglik_calc <- function(Y, gamma_inv){
 logistic.IRLS<- function(Xa,Xd,Y =Y, beta.initial.vec = c(0,0,0), d.stop.th = 1e-6, it.max = 100) {
 
   #Create the X matrix
-  X_mx <- cbind(1, Xa, Xd)
+  X_mx <- cbind(rep(1,nrow(Y)), Xa, Xd)
   
   #check this matrix:
 	#initialize the beta parameter vector at t=0
@@ -294,15 +291,12 @@ for(j in 1:dim(xa_matrix)[2]){
 #	cat("Locus ",j,"'s beta values: ",myList[[1]],"\n")
 }
 
+# log likelihood for NULL hypothesis
+logl_H0 <- logistic.IRLS(Y=Y, Xa= NULL, Xd=NULL, beta.initial.vec = c(0))[[2]]
 
-# beta.mu for the null hypothesis
-beta.mu.null<-mean(Y)
-
-#gamma inverse for the null hypothesis (beta.a=beta.d=0, beta.mu=mean(Y))
-gamma_inv_null<-exp(beta.mu.null)/(1+exp(beta.mu.null)) 
+LRT<-2*logl-2*logl_H0 #likelihood ratio test statistic
 
 #likelihood ratio test statistic for every genotype
-LRT<-2*logl-2*sum(Y*log(gamma_inv_null)+(1-Y)*log(1-gamma_inv_null)) 
 pval <- pchisq(LRT, 2, lower.tail = F)
 
 plot(-log10(pval), main = "P-values / Bonferroni cut-off")
