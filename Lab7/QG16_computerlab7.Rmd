@@ -294,6 +294,10 @@ for(j in 1:dim(xa_matrix)[2]){
 # log likelihood for NULL hypothesis
 logl_H0 <- logistic.IRLS(Y=Y, Xa= NULL, Xd=NULL, beta.initial.vec = c(0))[[2]]
 
+# alternative approach that sets Xa and Xd to zero to keep their influence out of the update
+logl_H0 <- logistic.IRLS(Y=Y, Xa= rep(0,nrow(Y)), Xd=rep(0,nrow(Y)), beta.initial.vec = c(0,0,0))[[2]]
+
+
 LRT<-2*logl-2*logl_H0 #likelihood ratio test statistic
 
 #likelihood ratio test statistic for every genotype
