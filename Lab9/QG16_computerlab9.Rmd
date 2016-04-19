@@ -1,0 +1,211 @@
+---
+author: "Jinhyun Ju"
+output: html_document
+---
+
+Quantitative Genomics and Genetics 2016
+======
+
+Computer Lab 9
+------
+
+-- 21 April 2016
+
+-- Author: Jin Hyun Ju (jj328@cornell.edu)
+
+### Including Covariates in Regression Models 
+
+If genotype effects and random noise were the only variables having an effect on the phenotype (y), the models that we used so far will be sufficient. However, in most real datasets there are many other factors that might have an influence on the phenotypes that we are interested in. This usually results in a loss of statistical power leading to incorrect results, since genetic effects are mostly very small. On top of that, a correlation structure between the independent variables (x) (for example genome wide correlated genotypes) can also obscure the output by calling too many variables significant. Today we are going to learn how to include additional covariates in the model to account for such scenarios.
+
+### 1. Linear Regression with Covariates
+
+So far the regression models that we have tested were only useful for testing a null hypothesis where the betas are 0 against an alternative hypothesis where the betas for genotypes have a non-zero value. However, when including covariates we are interested only in the beta values of the genotypes not the covariate beta values. In other words, we don't really care if the covariates have an effect on the phenotype, we just want to know whether the genotypes have an effect. So now the null hypothesis has to change a little bit, and to accommodate that change we have to use a slightly different framework than before. We are going to use the likelihood ratio test for this purpose. 
+
+The null is now :
+
+y = beta_mu + beta_c * covariate + error 
+
+and the alternative is :
+
+y = beta_mu + beta_g * genotypes + beta_c * covariate + error
+
+To test the significance of genotypes in this framework, we are going to calculate the likelihood for the null and the alternative and use a likelihood ratio test similar to what we did in the logistic regression lab. 
+
+```{r, comment = NA, echo = TRUE}
+
+library(MASS)
+library(lmtest)
+
+lr_likelihood <- function(y, xa_input = NULL){
+    n_samples <- length(y)
+
+    if(is.null(xa_input)){
+      X_mx <- matrix(1, nrow = n_samples, ncol = 1)  
+    } else {
+      X_mx <- cbind(1,xa_input)
+  
+    }
+    
+    MLE_beta <- ginv(t(X_mx) %*% X_mx) %*% t(X_mx) %*% y
+    y_hat <- X_mx %*% MLE_beta
+    
+    var_hat <- sum((y - (y_hat))^2) / (n_samples - 1)
+    
+    log_likelihood <- -((n_samples / 2) * log(2 * pi * var_hat) ) - ((1/ (2*var_hat)) * sum((y - (y_hat))^2))
+    
+    return(log_likelihood)
+}
+
+LRT_test <- function(logl_H0, logl_HA, df_test){
+
+    LRT<-2*logl_HA-2*logl_H0 #likelihood ratio test statistic
+    #likelihood ratio test statistic for every genotype
+    pval <- pchisq(LRT, df_test, lower.tail = F)
+    return(pval)
+}
+
+```
+
+Now let's see what the effects are for covariate inclusion. 
+
+Comparison 1) Simply testing the genotype effect with or without a covariate effect on the phenotype. 
+
+```{r, comment = NA, echo = TRUE}
+set.seed(1987)
+
+x = sample(c(-1,0,1), 100, replace = TRUE)
+
+y = 1.2 * x + rnorm(100)
+
+h0_nocovar <- lr_likelihood(y)
+h1_nocovar <- lr_likelihood(y, x)
+
+LRT_test(h0_nocovar, h1_nocovar, df_test = 1)
+
+x_c = sample(c(0,1), 100, replace = TRUE)
+y2 = 1.2 * x + 0.8 * x_c+ rnorm(100) 
+  
+h0_withcovar <- lr_likelihood(y2)
+h1_withcovar <- lr_likelihood(y2, x)
+LRT_test(h0_withcovar, h1_withcovar, df_test = 1)
+
+
+h0_includecovar <- lr_likelihood(y2, x_c)
+ha_includecovar <- lr_likelihood(y2, cbind(x,x_c))
+LRT_test(h0_includecovar, ha_includecovar, df_test = 1)
+
+```
+
+
+### 2. Logistic Regression with Covariates
+
+
+```{r, comment = NA, echo = FALSE,eval = TRUE, fig.align='center', fig.width=7,fig.height=4}
+library(MASS)
+library(ggplot2)
+
+W_calc <- function(gamma_inv){
+    N <- length(gamma_inv)
+		W<-diag(as.vector(gamma_inv * (1- gamma_inv)))
+      
+    return(W)
+}
+
+beta_update <- function(X_mx, W, Y, gamma_inv, beta){
+  beta_up <- beta + ginv(t(X_mx)%*%W%*%X_mx)%*%t(X_mx)%*%(Y-gamma_inv)
+	return(beta_up)
+}
+
+gamma_inv_calc <- function(X_mx, beta_t){
+    #initialize gamma
+    # K is the part which goes into the exponent
+    K <- X_mx %*% beta_t
+    gamma_inv <- exp(K)/(1+exp(K))
+    return(gamma_inv)
+}
+
+dev_calc <- function(Y, gamma_inv){
+    deviance <- 2*( sum(Y[Y==1]*log(Y[Y==1]/gamma_inv[Y==1])) + sum((1-Y[Y==0])*log((1-Y[Y==0])/(1-gamma_inv[Y==0]))) )  
+    return(deviance)
+}
+
+loglik_calc <- function(Y, gamma_inv){
+    loglik <- sum(Y*log(gamma_inv)+(1-Y)*log(1-gamma_inv))
+    return(loglik)
+}
+
+logistic.IRLS<- function(X = NULL, Covars = NULL,Y =Y, beta.initial.vec = c(0,0,0), d.stop.th = 1e-6, it.max = 100) {
+
+  #Create the X matrix
+
+  X_mx <- cbind(matrix(1, nrow = nrow(Y), ncol = 1),X, Covars)
+
+  #check this matrix:
+	#initialize the beta parameter vector at t=0
+	beta_t <- beta.initial.vec
+  
+  # initialize deviance at d[t]
+	dt <- 0
+	
+	#initialize gamma
+  # K is the part which goes into the exponent
+  gamma_inv <- gamma_inv_calc(X_mx, beta_t)
+	
+	for(i in 1:it.max) {
+		dpt1 <- dt #store previous deviance
+		
+    # create empty matrix W
+		W <- W_calc(gamma_inv)
+    
+		beta_t <- beta_update(X_mx, W, Y, gamma_inv, beta_t)
+		
+		#update gamma since it's a function of beta
+		
+		gamma_inv <- gamma_inv_calc(X_mx, beta_t)
+
+		#calculate new deviance
+		dt <- dev_calc(Y, gamma_inv)
+		
+		absD <- abs(dt - dpt1)
+		
+		if(absD < d.stop.th) {
+			#cat("Convergence at iteration:", i, "at threshold:", d.stop.th, "\n")
+			logl <- loglik_calc(Y, gamma_inv)
+			return(list(beta_t,logl))
+		}	
+	}
+	#cat("Convergence not reached after iteration:", i, "at threshold:", d.stop.th, "\n")
+	return(list(beta_t= c(NA,NA,NA),logl=NA))
+}
+
+
+
+Y <- read.table("../Lab7/QG16_Lab7_phenotypes.tsv", header = F,stringsAsFactors = F)
+geno <- read.table("../Lab7/QG16_Lab7_genotypes.tsv", header = T)
+
+Y <- as.matrix(Y)
+colnames(Y) <- NULL
+xa_matrix <- as.matrix(geno)
+xd_matrix <- 1 - 2*abs(xa_matrix)
+
+beta<-NULL
+logl<-NULL
+for(j in 1:dim(xa_matrix)[2]){
+	myList<-logistic.IRLS(X=cbind(xa_matrix[,j],xd_matrix[,j]),Y=Y)
+	beta<-cbind(beta,myList[[1]])
+	logl<-c(logl,myList[[2]])
+#	cat("Locus ",j,"'s beta values: ",myList[[1]],"\n")
+}
+
+# log likelihood for NULL hypothesis
+logl_H0 <- logistic.IRLS(Y=Y, X=NULL, beta.initial.vec = c(0))[[2]]
+
+LRT<-2*logl-2*logl_H0 #likelihood ratio test statistic
+
+#likelihood ratio test statistic for every genotype
+pval <- pchisq(LRT, 2, lower.tail = F)
+
+plot(-log10(pval), main = "P-values / Bonferroni cut-off")
+abline(-log10(0.05/300),0,col="red")
+```
+
