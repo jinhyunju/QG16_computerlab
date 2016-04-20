@@ -4,10 +4,10 @@ Quantitative Genomics and Genetics 2016 Spring
 
 ### Material For This Week
 
-### Lab 8 - [Notes](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab8/QG16_computerlab8.html "Lab8") [Data](https://github.com/jinhyunju/QG16_computerlab/raw/master/Lab8/pca_example_data.csv)
+### Lab 9 - [Notes](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab9/QG16_computerlab9.html "Lab9"), [Genotype Data](https://github.com/jinhyunju/QG16_computerlab/raw/master/Lab9/QG16_lab9_geno.csv), [Phenotype Data](https://github.com/jinhyunju/QG16_computerlab/raw/master/Lab9/QG16_lab9_pheno.csv)
 ---
 
-* Principal Component Analysis
+* The Use of Covariates in Regression Models.
 
 ## Computer Lab Material 
 
@@ -54,7 +54,11 @@ Quantitative Genomics and Genetics 2016 Spring
 
 * Logistic Regression
 
-### Lab 8 - [Notes](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab8/QG16_computerlab8.html "Lab8")
+### Lab 8 - [Notes](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab8/QG16_computerlab8.html "Lab8"), [Data](https://github.com/jinhyunju/QG16_computerlab/raw/master/Lab8/pca_example_data.csv)
 
 * Principal Component Analysis
 
+### Lab 9 - [Notes](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab9/QG16_computerlab9.html "Lab9"), [Genotype Data](https://github.com/jinhyunju/QG16_computerlab/raw/master/Lab9/QG16_lab9_geno.csv), [Phenotype Data](https://github.com/jinhyunju/QG16_computerlab/raw/master/Lab9/QG16_lab9_pheno.csv)
+---
+
+* The Use of Covariates in Regression Models.
