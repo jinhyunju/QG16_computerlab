@@ -74,7 +74,7 @@ img {
 </div>
 <div id="linear-regression-with-covariates" class="section level3">
 <h3>1. Linear Regression with Covariates</h3>
-<p>So far the regression models that we have tested were only useful for testing a null hypothesis where the genotype betas are all 0 against an alternative hypothesis where the betas for genotypes have a non-zero value. However, when including covariates we are interested only in the beta values of the genotypes not the covariate beta values. In other words, we don’t really care if the covariates have an effect on the phenotype, we just want to know whether the genotypes have an effect. So now the null hypothesis has to change a little bit, and to accommodate that change we have to use a slightly different framework than before. We are going to use the likelihood ratio test for this purpose.</p>
+<p>So far the regression models that we have tested were only useful for testing a null hypothesis where the genotype betas are all 0 against an alternative hypothesis where the betas for genotypes have a non-zero value. However, when including covariates we are only interested in the beta values of the genotypes not the covariate beta values. In other words, we don’t really care if the covariates have an effect on the phenotype, we just want to know whether the genotypes have an effect. So now the null hypothesis has to change a little bit, and to accommodate that change we have to use a slightly different framework than before. We are going to use the likelihood ratio test for this purpose.</p>
 <p>The null is now :</p>
 <p>y = beta_mu + beta_c * covariate + error</p>
 <p>and the alternative is :</p>
@@ -109,7 +109,7 @@ lr_likelihood &lt;- function(y, x_input = NULL){
     return(pval)
 }</code></pre>
 <p>Now let’s see what the effects are for covariate inclusion.</p>
-<p>Comparison 1) Simply testing the genotype effect with or without a covariate effect on the phenotype.</p>
+<p>First, simply testing the genotype effect with or without a covariate effect on the phenotype leads to different levels of significance.</p>
 <pre class="r"><code>set.seed(1987)
 
 x = sample(c(-1,0,1), 100, replace = TRUE)

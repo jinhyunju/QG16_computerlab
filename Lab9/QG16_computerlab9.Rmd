@@ -19,7 +19,7 @@ If genotype effects and random noise were the only variables having an effect on
 
 ### 1. Linear Regression with Covariates
 
-So far the regression models that we have tested were only useful for testing a null hypothesis where the genotype betas are all 0 against an alternative hypothesis where the betas for genotypes have a non-zero value. However, when including covariates we are interested only in the beta values of the genotypes not the covariate beta values. In other words, we don't really care if the covariates have an effect on the phenotype, we just want to know whether the genotypes have an effect. So now the null hypothesis has to change a little bit, and to accommodate that change we have to use a slightly different framework than before. We are going to use the likelihood ratio test for this purpose. 
+So far the regression models that we have tested were only useful for testing a null hypothesis where the genotype betas are all 0 against an alternative hypothesis where the betas for genotypes have a non-zero value. However, when including covariates we are only interested in the beta values of the genotypes not the covariate beta values. In other words, we don't really care if the covariates have an effect on the phenotype, we just want to know whether the genotypes have an effect. So now the null hypothesis has to change a little bit, and to accommodate that change we have to use a slightly different framework than before. We are going to use the likelihood ratio test for this purpose. 
 
 The null is now :
 
@@ -105,7 +105,7 @@ LRT_test <- function(logl_H0, logl_HA, df_test){
 
 Now let's see what the effects are for covariate inclusion. 
 
-Comparison 1) Simply testing the genotype effect with or without a covariate effect on the phenotype. 
+First, simply testing the genotype effect with or without a covariate effect on the phenotype leads to different levels of significance. 
 
 ```{r, comment = NA, echo = TRUE}
 set.seed(1987)
