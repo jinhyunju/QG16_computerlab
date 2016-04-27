@@ -4,7 +4,7 @@ Quantitative Genomics and Genetics 2016 Spring
 
 ### Material For This Week
 
-### Lab 10 - [Notes](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab10/QG16_computerlab10.html "Lab10")
+### Lab 10 - [Notes](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab10/QG16_computerlab10.pdf "Lab10")
 ---
 
 * Fitting Linear Mixed Models with the EM algorithm
@@ -63,7 +63,7 @@ Quantitative Genomics and Genetics 2016 Spring
 
 * The Use of Covariates in Regression Models.
 
-### Lab 10 - [Notes](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab10/QG16_computerlab10.html "Lab10")
+### Lab 10 - [Notes](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab10/QG16_computerlab10.pdf "Lab10")
 ---
 
 * Fitting Linear Mixed Models with the EM algorithm
