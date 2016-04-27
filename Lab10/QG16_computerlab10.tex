@@ -1,0 +1,201 @@
+\documentclass[11pt, oneside]{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   		% ... or a4paper or a5paper or ...
+\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}				% Use pdf, png, jpg, or eps? with pdflatex; use eps in DVI mode
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{soul}           % enables highlighting
+\usepackage{hyperref}       % include url
+\usepackage{fullpage}
+
+%\pagestyle{fullpage}
+\fancyhf{}
+\fancyhead[C]{\textit{3.4 Principal Component Analysis}}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyfoot[R]{page \thepage}
+%\fancyfoot[L]{\textit{\copyright{} Copyright 2008, 2015 – J Banfelder, Weill Cornell Medical College}}
+
+\title{Quantitative Genomics and Genetics 2016 \\ Computer Lab 10}
+\author{Jin Hyun Ju (jj328@cornell.edu)}
+\date{April 28, 2016}							% Activate to display a given date or no date
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+
+
+\maketitle
+
+
+\section{Linear Mixed Models}
+
+Linear mixed models are named so because unlike linear models where we only used fixed effects to model the dependent variables, they use a "mix" of fixed effects and random effects. To quickly review the linear model to directly compare their difference let's go back to the simplest form we have used to model genotype effects on the phenotype.
+
+$$ \vec{y_i} =  \mathbf{X}\beta_x + \vec{\epsilon} $$
+
+$$ \vec{\epsilon} \sim N(0, \sigma_e^2 \mathbf{I}) $$
+
+$ \vec{y_i}$ is a vector with n measurements of the phenotype, $ \mathbf{X} $ is the $n \times j $ matrix with $ j -1 $ indenpendent variables and one column with 1s for the mean, and $ \vec{\epsilon} $ is the normally distributed error with a variance of $ \sigma_e^2 $. We can also represent the model focusing on the normal error. The model can be shown as:
+
+$$ \vec{y_i} \sim N(\mathbf{X}\vec{\beta}, \sigma^2\mathbf{I}) $$
+
+\section{EM algorithm}
+
+I am including a mini exercise about the EM algorithm for those of you who are interested. In class we learned about mixed models and the EM algorithm to estimate the parameter values for the mixed model. The process of the EM algorithm is outlined below. Basically, what happens is that it fixes the parameters (betas, and sigmas) for the first step to calculate the best estimate for a and Va and in the next step it uses the values calculated for a and Va to update the betas and the sigmas until the values don't change much (reach convergence).
+
+The actual R code to run an EM algorithm on the dataset that is posted on the website is shown below. Here are some mini tasks regarding this exercise:
+
+Take a look at the given data and inspect the dimensions of each.
+
+For the given code, include a line that prints out the log likelihood for each iteration (Ex. $iteration = 1$, $loglikelihood = 500.123$). Also plot the log likelihood for each iteration in a line. What does it look like?
+
+Compare the results of the EM algorithm to the results of a simple linear fixed effect model and see what is different.
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(MASS)}  \hlcom{# load MASS package to use the ginv() function}
+
+\hlstd{X} \hlkwb{=} \hlkwd{as.matrix}\hlstd{(}\hlkwd{read.table}\hlstd{(}\hlstr{"QG16_Lab11_EM_X.txt"}\hlstd{))}
+\hlstd{Y} \hlkwb{=} \hlkwd{as.matrix}\hlstd{(}\hlkwd{read.table}\hlstd{(}\hlstr{"QG16_Lab11_EM_Y.txt"}\hlstd{))}
+\hlstd{A} \hlkwb{=} \hlkwd{as.matrix}\hlstd{(}\hlkwd{read.table}\hlstd{(}\hlstr{"QG16_Lab11_EM_A.txt"}\hlstd{))}
+
+
+
+\hlstd{EM_algorithm} \hlkwb{=} \hlkwa{function}\hlstd{(}\hlkwc{Y}\hlstd{,} \hlkwc{X_j}\hlstd{,} \hlkwc{A}\hlstd{) \{}
+    \hlcom{# Calculate the inverse of A once since it is used repeatedly in the}
+    \hlcom{# algorithm}
+    \hlstd{solve_A} \hlkwb{=} \hlkwd{ginv}\hlstd{(A)}
+
+    \hlstd{n} \hlkwb{=} \hlkwd{length}\hlstd{(Y)}
+
+    \hlstd{I} \hlkwb{=} \hlkwd{diag}\hlstd{(}\hlnum{1}\hlstd{, n)}
+
+    \hlstd{log_L} \hlkwb{=} \hlkwd{c}\hlstd{()}
+    \hlcom{# set starting values}
+    \hlstd{sigma_sq_a} \hlkwb{=} \hlnum{70}
+    \hlstd{sigma_sq_e} \hlkwb{=} \hlnum{10}
+    \hlstd{beta} \hlkwb{=} \hlkwd{as.vector}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwd{ncol}\hlstd{(X_j)))}
+
+
+    \hlstd{C} \hlkwb{=} \hlstd{A} \hlopt{*} \hlstd{sigma_sq_a} \hlopt{+} \hlstd{I} \hlopt{*} \hlstd{sigma_sq_e}
+    \hlstd{log_L[}\hlnum{1}\hlstd{]} \hlkwb{=} \hlopt{-}\hlnum{1}\hlopt{/}\hlnum{2} \hlopt{*} \hlkwd{determinant}\hlstd{(C)}\hlopt{$}\hlstd{modulus} \hlopt{-} \hlnum{1}\hlopt{/}\hlnum{2} \hlopt{*} \hlkwd{t}\hlstd{(Y} \hlopt{-} \hlstd{X_j} \hlopt{%*%} \hlstd{beta)} \hlopt{%*%}
+        \hlkwd{ginv}\hlstd{(C)} \hlopt{%*%} \hlstd{(Y} \hlopt{-} \hlstd{X_j} \hlopt{%*%} \hlstd{beta)}
+    \hlstd{iter} \hlkwb{=} \hlnum{2}
+
+    \hlkwa{while} \hlstd{(}\hlnum{1}\hlstd{) \{}
+
+        \hlstd{S} \hlkwb{=} \hlkwd{ginv}\hlstd{(I} \hlopt{+} \hlstd{solve_A} \hlopt{*} \hlstd{sigma_sq_e}\hlopt{/}\hlstd{sigma_sq_a)}
+
+        \hlstd{alpha} \hlkwb{=} \hlstd{S} \hlopt{%*%} \hlstd{(Y} \hlopt{-} \hlstd{X_j} \hlopt{%*%} \hlstd{beta)}
+
+        \hlstd{V} \hlkwb{=} \hlstd{S} \hlopt{*} \hlstd{sigma_sq_e}
+
+        \hlstd{beta} \hlkwb{=} \hlkwd{ginv}\hlstd{(}\hlkwd{t}\hlstd{(X_j)} \hlopt{%*%} \hlstd{X_j)} \hlopt{%*%} \hlkwd{t}\hlstd{(X_j)} \hlopt{%*%} \hlstd{(Y} \hlopt{-} \hlstd{alpha)}
+
+        \hlstd{sigma_sq_a} \hlkwb{=} \hlnum{1}\hlopt{/}\hlstd{n} \hlopt{*} \hlstd{(}\hlkwd{t}\hlstd{(alpha)} \hlopt{%*%} \hlstd{solve_A} \hlopt{%*%} \hlstd{alpha} \hlopt{+} \hlkwd{sum}\hlstd{(}\hlkwd{diag}\hlstd{(solve_A} \hlopt{%*%}
+            \hlstd{V)))}
+
+        \hlstd{sigma_sq_e} \hlkwb{=} \hlnum{1}\hlopt{/}\hlstd{n} \hlopt{*} \hlstd{(}\hlkwd{t}\hlstd{(Y} \hlopt{-} \hlstd{X_j} \hlopt{%*%} \hlstd{beta} \hlopt{-} \hlstd{alpha)} \hlopt{%*%} \hlstd{(Y} \hlopt{-} \hlstd{X_j} \hlopt{%*%} \hlstd{beta} \hlopt{-}
+            \hlstd{alpha)} \hlopt{+} \hlkwd{sum}\hlstd{(}\hlkwd{diag}\hlstd{(V)))}
+
+        \hlstd{C} \hlkwb{=} \hlstd{A} \hlopt{*} \hlstd{sigma_sq_a} \hlopt{+} \hlstd{I} \hlopt{*} \hlstd{sigma_sq_e}
+        \hlstd{log_L[iter]} \hlkwb{=} \hlopt{-}\hlnum{1}\hlopt{/}\hlnum{2} \hlopt{*} \hlkwd{determinant}\hlstd{(C)}\hlopt{$}\hlstd{modulus} \hlopt{-} \hlnum{1}\hlopt{/}\hlnum{2} \hlopt{*} \hlkwd{t}\hlstd{(Y} \hlopt{-} \hlstd{X_j} \hlopt{%*%} \hlstd{beta)} \hlopt{%*%}
+            \hlkwd{ginv}\hlstd{(C)} \hlopt{%*%} \hlstd{(Y} \hlopt{-} \hlstd{X_j} \hlopt{%*%} \hlstd{beta)}
+
+        \hlkwa{if} \hlstd{(log_L[iter]} \hlopt{-} \hlstd{log_L[iter} \hlopt{-} \hlnum{1}\hlstd{]} \hlopt{<} \hlnum{1e-05}\hlstd{) \{}
+            \hlkwa{break}
+        \hlstd{\}}
+
+        \hlstd{iter} \hlkwb{=} \hlstd{iter} \hlopt{+} \hlnum{1}
+    \hlstd{\}}
+
+    \hlkwd{return}\hlstd{(}\hlkwd{list}\hlstd{(}\hlkwc{beta} \hlstd{= beta,} \hlkwc{sigma_sq_a} \hlstd{= sigma_sq_a,} \hlkwc{sigma_sq_e} \hlstd{= sigma_sq_e,}
+        \hlkwc{log_L} \hlstd{= log_L[iter} \hlopt{-} \hlnum{1}\hlstd{]))}
+
+\hlstd{\}}
+
+
+
+\hlcom{############### Mixed model #}
+
+\hlstd{n_indivs} \hlkwb{=} \hlkwd{length}\hlstd{(Y)}
+
+\hlcom{# Null model}
+\hlstd{One} \hlkwb{=} \hlkwd{as.matrix}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{, n_indivs))}
+\hlstd{log_L_null} \hlkwb{=} \hlkwd{EM_algorithm}\hlstd{(Y, One, A)}\hlopt{$}\hlstd{log_L}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in A * sigma\_sq\_a: non-conformable arrays}}\begin{alltt}
+\hlstd{p_values_EM} \hlkwb{=} \hlkwd{c}\hlstd{()}
+
+\hlcom{# Full model}
+\hlkwa{for} \hlstd{(j} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{ncol}\hlstd{(X)) \{}
+
+    \hlstd{X_j} \hlkwb{=} \hlkwd{cbind}\hlstd{(}\hlnum{1}\hlstd{, X[, j])}
+
+    \hlstd{fit} \hlkwb{=} \hlkwd{EM_algorithm}\hlstd{(Y, X_j, A)}
+
+    \hlstd{p_values_EM[j]} \hlkwb{=} \hlkwd{pchisq}\hlstd{(}\hlopt{-}\hlnum{2} \hlopt{*} \hlstd{(log_L_null} \hlopt{-} \hlstd{fit}\hlopt{$}\hlstd{log_L),} \hlnum{1}\hlstd{,} \hlkwc{lower.tail} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+
+    \hlkwd{cat}\hlstd{(}\hlstr{"."}\hlstd{)}
+\hlstd{\}}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in A * sigma\_sq\_a: non-conformable arrays}}\end{kframe}
+\end{knitrout}
+
+
+\end{document}
