@@ -61,7 +61,7 @@
 
 %\pagestyle{fullpage}
 \fancyhf{}
-\fancyhead[C]{\textit{3.4 Principal Component Analysis}}
+\fancyhead[C]{\textit{Linear Mixed Models and the EM algorithm}}
 \renewcommand{\footrulewidth}{0.4pt}
 \fancyfoot[R]{page \thepage}
 %\fancyfoot[L]{\textit{\copyright{} Copyright 2008, 2015 – J Banfelder, Weill Cornell Medical College}}
@@ -78,27 +78,47 @@
 
 \section{Linear Mixed Models}
 
-Linear mixed models are named so because unlike linear models where we only used fixed effects to model the dependent variables, they use a "mix" of fixed effects and random effects. To quickly review the linear model to directly compare their difference let's go back to the simplest form we have used to model genotype effects on the phenotype.
+Linear mixed models are named so because unlike linear models with only fixed effects, they use a "mix" of fixed effects and random effects. To directly compare the difference between the two models, let's review the linear model in its simplest form we have used to model genotype effects on the phenotype.
 
-$$ \vec{y_i} =  \mathbf{X}\beta_x + \vec{\epsilon} $$
+$$ \vec{y} =  \mathbf{X}\vec{\beta} + \vec{\epsilon} $$
+$$ \vec{\epsilon} \sim N(\vec{0}, \sigma_e^2 \mathbf{I}) $$
 
-$$ \vec{\epsilon} \sim N(0, \sigma_e^2 \mathbf{I}) $$
+$ \vec{y}$ is a vector with $ n $ measurements of the phenotype, $ \mathbf{X} $ is the $n \times j $ matrix with $ j -1 $ indenpendent variables and one column with 1s for the mean, $ \vec{\beta} $ is an $ j $ dimensional vector of the beta values, and $ \vec{\epsilon} $ is the normally distributed error with a variance of $ \sigma_e^2 $. We can also represent the model as a multivariate normal distribution as:
 
-$ \vec{y_i}$ is a vector with n measurements of the phenotype, $ \mathbf{X} $ is the $n \times j $ matrix with $ j -1 $ indenpendent variables and one column with 1s for the mean, and $ \vec{\epsilon} $ is the normally distributed error with a variance of $ \sigma_e^2 $. We can also represent the model focusing on the normal error. The model can be shown as:
+$$ \vec{y_i} \sim N(\mathbf{X}\vec{\beta}, \sigma_e^2\mathbf{I}) $$
 
-$$ \vec{y_i} \sim N(\mathbf{X}\vec{\beta}, \sigma^2\mathbf{I}) $$
+where the mean of the phenotypes depend on $ \mathbf{X}\vec{\beta} $ and the error has no structure. In this case, we had to only worry about the likelihood of $\vec{\beta}$ and $\sigma_e^2$ given the data. This had a nice closed form solution to calculate the maximum likelihood esitmators for the $\beta$ values which were the center of attention and the variance $\sigma_e^2$ which we did not focus on that much.
+
+In comparison, linear mixed models have additional random effect terms in the model. The most commonly used form in genomics will look something like this:
+
+$$ \vec{y} =  \mathbf{X}\vec{\beta} + \vec{a} + \vec{\epsilon}$$
+$$ \vec{a} \sim N(\vec{0}, \sigma_a^2 \mathbf{A}) $$
+$$ \vec{\epsilon} \sim N(\vec{0}, \sigma_e^2 \mathbf{I}) $$
+
+where $\vec{a}$ is a $ n $ dimensional vector representing the random effect drawn from a multivariate normal distribution with a variance structure defined by the $n \times n $ covariance matrix $\mathbf{A}$. In a multivariate normal distribution form the model can be shown as:
+
+$$ \vec{y} \sim N(\mathbf{X}\vec{\beta}, \sigma_a^2\mathbf{A} + \sigma_e^2\mathbf{I}) $$
+
+As you can see the key difference between the linear model and the linear mixed model lies in the modeling of the variance. Intuitively, $ \mathbf{A} $ represents the pairwise similarity between the $ n $ samples, which has an affect on the residual variance. Simply put, the random effect is included to account for samples that are not independent.
+
+Now that we have three parameters to estimate ($\vec{\beta}, \sigma_a^2, \sigma_e^2$) there is no closed form solution anymore. This week we will learn how to get the maximum likelihood estimators for those parameters using an EM algorithm
 
 \section{EM algorithm}
 
-I am including a mini exercise about the EM algorithm for those of you who are interested. In class we learned about mixed models and the EM algorithm to estimate the parameter values for the mixed model. The process of the EM algorithm is outlined below. Basically, what happens is that it fixes the parameters (betas, and sigmas) for the first step to calculate the best estimate for a and Va and in the next step it uses the values calculated for a and Va to update the betas and the sigmas until the values don't change much (reach convergence).
+Roughly speaking, the process of the EM algorithm can be outlined in two steps. During the first step it fixes the parameters (betas, and sigmas) to calculate the best estimate for \verb|alpha, V| in the code, which are used in the next step to update the betas and the sigmas until the likelihood does not change much.
 
-The actual R code to run an EM algorithm on the dataset that is posted on the website is shown below. Here are some mini tasks regarding this exercise:
+The technical aspect of the EM algorithm is beyond the scope of this course, so in this exercise we are going to focus on understanding the concept, inputs and outputs.
 
-Take a look at the given data and inspect the dimensions of each.
+\subsection{Exercise}
 
-For the given code, include a line that prints out the log likelihood for each iteration (Ex. $iteration = 1$, $loglikelihood = 500.123$). Also plot the log likelihood for each iteration in a line. What does it look like?
+\begin{itemize}
 
-Compare the results of the EM algorithm to the results of a simple linear fixed effect model and see what is different.
+  \item Using the data files for this lab, inspect the input. Try to visualize the given A matrix. What does the structure shown in the A matrix imply?
+
+
+  \item To check that our algorithm actually works, modify the function to print out the iteration step and the corresponding log likelihood. Does the log-likelihood increase after each step? Generate a plot that shows the log likelihood for each iteration.
+
+\end{itemize}
 
 
 \begin{knitrout}
@@ -112,7 +132,8 @@ Compare the results of the EM algorithm to the results of a simple linear fixed 
 
 
 
-\hlstd{EM_algorithm} \hlkwb{=} \hlkwa{function}\hlstd{(}\hlkwc{Y}\hlstd{,} \hlkwc{X_j}\hlstd{,} \hlkwc{A}\hlstd{) \{}
+\hlstd{EM_algorithm} \hlkwb{=} \hlkwa{function}\hlstd{(}\hlkwc{Y}\hlstd{,} \hlkwc{X_j}\hlstd{,} \hlkwc{A}\hlstd{,} \hlkwc{max.iter} \hlstd{=} \hlnum{100}\hlstd{) \{}
+
     \hlcom{# Calculate the inverse of A once since it is used repeatedly in the}
     \hlcom{# algorithm}
     \hlstd{solve_A} \hlkwb{=} \hlkwd{ginv}\hlstd{(A)}
@@ -133,21 +154,24 @@ Compare the results of the EM algorithm to the results of a simple linear fixed 
         \hlkwd{ginv}\hlstd{(C)} \hlopt{%*%} \hlstd{(Y} \hlopt{-} \hlstd{X_j} \hlopt{%*%} \hlstd{beta)}
     \hlstd{iter} \hlkwb{=} \hlnum{2}
 
-    \hlkwa{while} \hlstd{(}\hlnum{1}\hlstd{) \{}
+    \hlkwa{while} \hlstd{(iter} \hlopt{<} \hlstd{max.iter) \{}
 
+        \hlcom{# calculate S, alpha and V using the previous beta, sigma_a, sigma_e values}
         \hlstd{S} \hlkwb{=} \hlkwd{ginv}\hlstd{(I} \hlopt{+} \hlstd{solve_A} \hlopt{*} \hlstd{sigma_sq_e}\hlopt{/}\hlstd{sigma_sq_a)}
 
         \hlstd{alpha} \hlkwb{=} \hlstd{S} \hlopt{%*%} \hlstd{(Y} \hlopt{-} \hlstd{X_j} \hlopt{%*%} \hlstd{beta)}
 
         \hlstd{V} \hlkwb{=} \hlstd{S} \hlopt{*} \hlstd{sigma_sq_e}
 
+        \hlcom{# update beta, sigma_a, sigma_e}
         \hlstd{beta} \hlkwb{=} \hlkwd{ginv}\hlstd{(}\hlkwd{t}\hlstd{(X_j)} \hlopt{%*%} \hlstd{X_j)} \hlopt{%*%} \hlkwd{t}\hlstd{(X_j)} \hlopt{%*%} \hlstd{(Y} \hlopt{-} \hlstd{alpha)}
 
-        \hlstd{sigma_sq_a} \hlkwb{=} \hlnum{1}\hlopt{/}\hlstd{n} \hlopt{*} \hlstd{(}\hlkwd{t}\hlstd{(alpha)} \hlopt{%*%} \hlstd{solve_A} \hlopt{%*%} \hlstd{alpha} \hlopt{+} \hlkwd{sum}\hlstd{(}\hlkwd{diag}\hlstd{(solve_A} \hlopt{%*%}
-            \hlstd{V)))}
+        \hlstd{sigma_sq_a} \hlkwb{=} \hlkwd{as.numeric}\hlstd{(}\hlnum{1}\hlopt{/}\hlstd{n} \hlopt{*} \hlstd{(}\hlkwd{t}\hlstd{(alpha)} \hlopt{%*%} \hlstd{solve_A} \hlopt{%*%} \hlstd{alpha} \hlopt{+} \hlkwd{sum}\hlstd{(}\hlkwd{diag}\hlstd{(solve_A} \hlopt{%*%}
+            \hlstd{V))))}
 
-        \hlstd{sigma_sq_e} \hlkwb{=} \hlnum{1}\hlopt{/}\hlstd{n} \hlopt{*} \hlstd{(}\hlkwd{t}\hlstd{(Y} \hlopt{-} \hlstd{X_j} \hlopt{%*%} \hlstd{beta} \hlopt{-} \hlstd{alpha)} \hlopt{%*%} \hlstd{(Y} \hlopt{-} \hlstd{X_j} \hlopt{%*%} \hlstd{beta} \hlopt{-}
-            \hlstd{alpha)} \hlopt{+} \hlkwd{sum}\hlstd{(}\hlkwd{diag}\hlstd{(V)))}
+        \hlstd{sigma_sq_e} \hlkwb{=} \hlkwd{as.numeric}\hlstd{(}\hlnum{1}\hlopt{/}\hlstd{n} \hlopt{*} \hlstd{(}\hlkwd{t}\hlstd{(Y} \hlopt{-} \hlstd{X_j} \hlopt{%*%} \hlstd{beta} \hlopt{-} \hlstd{alpha)} \hlopt{%*%} \hlstd{(Y} \hlopt{-}
+            \hlstd{X_j} \hlopt{%*%} \hlstd{beta} \hlopt{-} \hlstd{alpha)} \hlopt{+} \hlkwd{sum}\hlstd{(}\hlkwd{diag}\hlstd{(V))))}
+
 
         \hlstd{C} \hlkwb{=} \hlstd{A} \hlopt{*} \hlstd{sigma_sq_a} \hlopt{+} \hlstd{I} \hlopt{*} \hlstd{sigma_sq_e}
         \hlstd{log_L[iter]} \hlkwb{=} \hlopt{-}\hlnum{1}\hlopt{/}\hlnum{2} \hlopt{*} \hlkwd{determinant}\hlstd{(C)}\hlopt{$}\hlstd{modulus} \hlopt{-} \hlnum{1}\hlopt{/}\hlnum{2} \hlopt{*} \hlkwd{t}\hlstd{(Y} \hlopt{-} \hlstd{X_j} \hlopt{%*%} \hlstd{beta)} \hlopt{%*%}
@@ -162,7 +186,6 @@ Compare the results of the EM algorithm to the results of a simple linear fixed 
 
     \hlkwd{return}\hlstd{(}\hlkwd{list}\hlstd{(}\hlkwc{beta} \hlstd{= beta,} \hlkwc{sigma_sq_a} \hlstd{= sigma_sq_a,} \hlkwc{sigma_sq_e} \hlstd{= sigma_sq_e,}
         \hlkwc{log_L} \hlstd{= log_L[iter} \hlopt{-} \hlnum{1}\hlstd{]))}
-
 \hlstd{\}}
 
 
@@ -174,15 +197,11 @@ Compare the results of the EM algorithm to the results of a simple linear fixed 
 \hlcom{# Null model}
 \hlstd{One} \hlkwb{=} \hlkwd{as.matrix}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{, n_indivs))}
 \hlstd{log_L_null} \hlkwb{=} \hlkwd{EM_algorithm}\hlstd{(Y, One, A)}\hlopt{$}\hlstd{log_L}
-\end{alltt}
 
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in A * sigma\_sq\_a: non-conformable arrays}}\begin{alltt}
 \hlstd{p_values_EM} \hlkwb{=} \hlkwd{c}\hlstd{()}
 
 \hlcom{# Full model}
 \hlkwa{for} \hlstd{(j} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{ncol}\hlstd{(X)) \{}
-
     \hlstd{X_j} \hlkwb{=} \hlkwd{cbind}\hlstd{(}\hlnum{1}\hlstd{, X[, j])}
 
     \hlstd{fit} \hlkwb{=} \hlkwd{EM_algorithm}\hlstd{(Y, X_j, A)}
@@ -192,9 +211,10 @@ Compare the results of the EM algorithm to the results of a simple linear fixed 
     \hlkwd{cat}\hlstd{(}\hlstr{"."}\hlstd{)}
 \hlstd{\}}
 \end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in A * sigma\_sq\_a: non-conformable arrays}}\end{kframe}
+\begin{verbatim}
+## ....................................................................................................
+\end{verbatim}
+\end{kframe}
 \end{knitrout}
 
 
