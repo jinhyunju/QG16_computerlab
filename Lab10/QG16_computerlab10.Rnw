@@ -39,7 +39,7 @@ $ \vec{y_i}$ is a vector with n measurements of the phenotype, $ \mathbf{X} $ is
 
 $$ \vec{y_i} \sim N(\mathbf{X}\vec{\beta}, \sigma^2\mathbf{I}) $$
 
-\section{EM algorithm}
+\section{EM algorithm}git
 
 I am including a mini exercise about the EM algorithm for those of you who are interested. In class we learned about mixed models and the EM algorithm to estimate the parameter values for the mixed model. The process of the EM algorithm is outlined below. Basically, what happens is that it fixes the parameters (betas, and sigmas) for the first step to calculate the best estimate for a and Va and in the next step it uses the values calculated for a and Va to update the betas and the sigmas until the values don't change much (reach convergence).
 
