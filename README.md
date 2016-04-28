@@ -4,7 +4,7 @@ Quantitative Genomics and Genetics 2016 Spring
 
 ### Material For This Week
 
-### Lab 10 - [Notes](https://github.com/jinhyunju/QG16_computerlab/raw/master/Lab10/QG16_computerlab10.pdf "Lab10"), [Pheno_Data](https://raw.githubusercontent.com/jinhyunju/QG16_computerlab/master/Lab10/QG16_Lab11_EM_Y.txt), [Gheno_Data](https://raw.githubusercontent.com/jinhyunju/QG16_computerlab/master/Lab10/QG16_Lab11_EM_X.txt), [Amx_Data](https://raw.githubusercontent.com/jinhyunju/QG16_computerlab/master/Lab10/QG16_Lab11_EM_A.txt)
+### Lab 10 - [Notes](https://github.com/jinhyunju/QG16_computerlab/raw/master/Lab10/QG16_computerlab10.pdf "Lab10"), [Pheno_Data](https://raw.githubusercontent.com/jinhyunju/QG16_computerlab/master/Lab10/QG16_Lab11_EM_Y.txt), [Geno_Data](https://raw.githubusercontent.com/jinhyunju/QG16_computerlab/master/Lab10/QG16_Lab11_EM_X.txt), [Amx_Data](https://raw.githubusercontent.com/jinhyunju/QG16_computerlab/master/Lab10/QG16_Lab11_EM_A.txt)
 ---
 
 * Fitting Linear Mixed Models with the EM algorithm
@@ -63,7 +63,7 @@ Quantitative Genomics and Genetics 2016 Spring
 
 * The Use of Covariates in Regression Models.
 
-### Lab 10 - [Notes](https://github.com/jinhyunju/QG16_computerlab/raw/master/Lab10/QG16_computerlab10.pdf "Lab10"), [Pheno_Data](https://raw.githubusercontent.com/jinhyunju/QG16_computerlab/master/Lab10/QG16_Lab11_EM_Y.txt), [Gheno_Data](https://raw.githubusercontent.com/jinhyunju/QG16_computerlab/master/Lab10/QG16_Lab11_EM_X.txt), [Amx_Data](https://raw.githubusercontent.com/jinhyunju/QG16_computerlab/master/Lab10/QG16_Lab11_EM_A.txt)
+### Lab 10 - [Notes](https://github.com/jinhyunju/QG16_computerlab/raw/master/Lab10/QG16_computerlab10.pdf "Lab10"), [Pheno_Data](https://raw.githubusercontent.com/jinhyunju/QG16_computerlab/master/Lab10/QG16_Lab11_EM_Y.txt), [Geno_Data](https://raw.githubusercontent.com/jinhyunju/QG16_computerlab/master/Lab10/QG16_Lab11_EM_X.txt), [Amx_Data](https://raw.githubusercontent.com/jinhyunju/QG16_computerlab/master/Lab10/QG16_Lab11_EM_A.txt)
 ---
 
 * Fitting Linear Mixed Models with the EM algorithm
