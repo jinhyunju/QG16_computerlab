@@ -1,0 +1,160 @@
+---
+author: "Jinhyun Ju"
+output: html_document
+---
+
+Quantitative Genomics and Genetics 2016
+======
+
+Computer Lab 11
+------
+
+-- 5 May 2016
+
+-- Author: Jin Hyun Ju (jj328@cornell.edu)
+
+### Bayesian Inference with Markov Chain Monte Carlo Methods
+
+Code for this exercise was adapted from :
+https://theoreticalecology.wordpress.com/2010/09/17/metropolis-hastings-mcmc-in-r/
+
+So far we have been dealing with parameter estimates that gave us an answer in the form fixed numbers. For example, with the maximum likelihood estimators for $\beta_{\mu}, \beta_a,\beta_d$, we got fixed values for each parameter that we were interested in. The major difference between this way and bayesian inference is that in bayesian inference we end up with a "distribution" for our parameters not a single number. 
+
+For the simple linear regression case, we can use the closed form that we learned in the lecture for bayesian inference as well but for the sake of demonstration we are going to use the Metropolis-Hastings algorithm to generate samples from the posterior distrubition. 
+
+First we are going to create a few data points with random values of Xa and using the parameters $\beta_{\mu} = 1.15, \beta_a = 3.5, \sigma = 2$. All the values are completely arbitrary so you are welcome to try it with different ones.
+
+```{r data_generation, comment=NA, fig.align='center'}
+
+set.seed(2000) #setting seed for reproducible results
+
+# Generate linear regression sample
+# creating Xa values (continuous)
+Xa <- runif(100,min=-5,max = 5)
+
+# True parameter values that we assume that we don't know before the analysis.
+beta.mu <- 1.15
+beta.a <- 3.5
+sd <- 2
+
+# Simulate Y based on the parameters
+Y <- beta.mu + Xa * beta.a + rnorm(100,0,sd)
+
+# A visual check of the data is always a good practice to inlcude
+plot(Xa,Y, main="Xa vs Y")
+
+parameters <- c(beta.mu,beta.a,sd)
+
+```
+
+So far everything seems familiar to us. Now we will have to set prior distributions on the parameters that we are interested in. This code is not actually doing anything since it is just declaring a function, but you can see that we are putting a normal prior on $\beta_{\mu},\beta_a$ and an exponential prior on $\sigma_{epsilon}$ (Why is a different prior more suitable for the standard deviation?). Also we need to calculate the likelihood in order to get to the posterior.
+The reason for using log densities in this case is because if we use the densities as they are it is often happens that the numbers are getting too small and thus getting subject to numerical errors. 
+
+
+```{r MCMC, comment=NA, fig.align='center'}
+
+# Prior distribution
+log.prior <- function(parameters){
+    beta.mu <- parameters[1]
+    beta.a <- parameters[2]
+    sd <- parameters[3]
+    
+    mu.prior <- dnorm(beta.mu,  log = T)  # normal prior on beta.mu (mean 0, sd = 1)
+    a.prior <- dnorm(beta.a,  log = T)    # normal prior on beta.a (mean 0, sd = 1)
+    sdprior <- dexp(sd, log = T)          # exponentional prior on sd
+    return(mu.prior+a.prior+sdprior)
+}
+
+log.likelihood <- function(parameters,Xa,Y){
+    beta.mu <- parameters[1]
+    beta.a <- parameters[2]
+    sd <- parameters[3]
+     
+    y.hat <- beta.mu + Xa * beta.a
+    likelihood <- dnorm(Y, mean = y.hat, sd = sd, log = T)
+    sum.likelihood <- sum(likelihood)
+    return(sum.likelihood)   
+}
+
+```
+
+
+Now that we have the likelihood and the prior, we can easily get the posterior through a simple function. 
+
+
+```{r , comment = NA}
+
+log.posterior <- function(parameters, Xa,Y){
+   posterior <- log.likelihood(parameters,Xa,Y) + log.prior(parameters)
+   return (posterior)
+}
+
+```
+
+We have everything we need to run the Metropolis-Hastings algorithm on the table, so let's give it a try by running the following code section. I did not include the details about the algorithm itself since it is beyond the scope of an hour long computer lab. 
+
+
+```{r, comment = NA, fig.align='center'}
+proposal_func <- function(parameters){
+  proposal.output <- c(rnorm(2,mean = parameters[1:2], sd = c(0.2,0.2)),abs(rnorm(1,mean=parameters[3],sd = 0.1))) # why do we need an abs for the sd?
+    return(proposal.output) 
+}
+ 
+MH_MCMC <- function(startvalue, iterations,Xa,Y){
+    samples <- matrix(nrow = iterations+1, ncol = 3)
+    samples[1,] <- startvalue
+    for (i in 1:iterations){
+      
+        proposal <- proposal_func(samples[i,])
+        
+        probabilty <- exp(log.posterior(proposal,Xa,Y) - log.posterior(samples[i,],Xa,Y))
+        unif <- runif(1)
+        if (unif < probabilty){
+            samples[i+1,] <- proposal     # update with a high probability
+        }else{ 
+            samples[i+1,] <- samples[i,]  # Do not update with a low probability
+        }
+    }
+    return(samples)
+}
+ 
+
+initial.value <- c(0,0,0)   # set strarting values
+
+samples1 <- MH_MCMC(initial.value, 10000,Xa,Y) # Run the MH algorithm with 10000 iterations
+ 
+burnIn = 1000  # discard the first 1000 iterations 
+
+
+# Plot the results
+par(mfrow = c(2,3))
+hist(samples1[-(1:burnIn),1], main="Posterior of beta.mu", xlab="True value = red line" )
+abline(v = mean(samples1[-(1:burnIn),1]))
+abline(v = beta.mu, col="red" )
+hist(samples1[-(1:burnIn),2], main="Posterior of beta.a", xlab="True value = red line")
+abline(v = mean(samples1[-(1:burnIn),2]))
+abline(v = beta.a, col="red" )
+hist(samples1[-(1:burnIn),3], main="Posterior of sd", xlab="True value = red line")
+abline(v = mean(samples1[-(1:burnIn),3]) )
+abline(v = sd, col="red" )
+plot(samples1[-(1:burnIn),1], type = "l", xlab="True value = red line" , main = "samples1 values of beta.mu", )
+abline(h = beta.mu, col="red" )
+plot(samples1[-(1:burnIn),2], type = "l", xlab="True value = red line" , main = "samples1 values of beta.a", )
+abline(h = beta.a, col="red" )
+plot(samples1[-(1:burnIn),3], type = "l", xlab="True value = red line" , main = "samples1 values of sd", )
+abline(h = sd, col="red" )
+ 
+
+```
+
++ What do the results tell you about our model? 
+
++ Do the results differ a lot when compared to a simple linear regression done by lm()?
+
++ When you look at the samples without a "burn-in" period what do you see?
+
+***
+### That's it for this semesters computer lab. 
+### Good luck on the project & final exam. Cheers!
+***
+
