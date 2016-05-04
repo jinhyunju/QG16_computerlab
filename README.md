@@ -4,10 +4,10 @@ Quantitative Genomics and Genetics 2016 Spring
 
 ### Material For This Week
 
-### Lab 10 - [Notes](https://github.com/jinhyunju/QG16_computerlab/raw/master/Lab10/QG16_computerlab10.pdf "Lab10"), [Pheno_Data](https://raw.githubusercontent.com/jinhyunju/QG16_computerlab/master/Lab10/QG16_Lab11_EM_Y.txt), [Geno_Data](https://raw.githubusercontent.com/jinhyunju/QG16_computerlab/master/Lab10/QG16_Lab11_EM_X.txt), [Amx_Data](https://raw.githubusercontent.com/jinhyunju/QG16_computerlab/master/Lab10/QG16_Lab11_EM_A.txt)
+### Lab 11 - [Notes](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab11/QG16_computerlab11.html "Lab10")
 ---
 
-* Fitting Linear Mixed Models with the EM algorithm
+* Bayesian Inference with Markov Chain Monte Carlo (MCMC) methods
 
 ## Computer Lab Material 
 
@@ -67,3 +67,8 @@ Quantitative Genomics and Genetics 2016 Spring
 ---
 
 * Fitting Linear Mixed Models with the EM algorithm
+
+### Lab 11 - [Notes](http://htmlpreview.github.io/?https://github.com/jinhyunju/QG16_computerlab/blob/master/Lab11/QG16_computerlab11.html "Lab10")
+---
+
+* Bayesian Inference with Markov Chain Monte Carlo (MCMC) methods
