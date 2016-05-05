@@ -127,18 +127,18 @@ $(document).ready(function () {
 </ul>
 <p>So far we have been dealing with parameter estimates that gave us an answer in the form of fixed numbers. For example, with the maximum likelihood estimators for <span class="math">\(\theta = [\beta_{\mu}, \beta_a,\beta_d]\)</span>, we got fixed values for each parameter that we were interested in. In other words, we assumed that there are fixed true values of the parameters and used the estimaters that maximized the likelihood as our best guesses.</p>
 <p><span class="math">\[ L(\theta | data) \propto p(data | \theta) \]</span></p>
-<p><span class="math">\[MLE(\hat{\theta}) = argmax_{\theta}(L(\theta | data)) \]</span></p>
+<p><span class="math">\[ MLE(\hat{\theta}) = argmax_{\theta}(L(\theta | data)) \]</span></p>
 <p>The major difference between this and bayesian inference is that in bayesian inference we assume that there is a underlying “distribution” for our parameters not a single number. In order to estimate this distribution from a given sample, Bayes’ theorem is used.</p>
-<p><span class="math">\[p(A | B) = \frac{p(B | A ) p (A)}{p(B)}\]</span></p>
+<p><span class="math">\[ p(A | B) = \frac{p(B | A ) p (A)}{p(B)} \]</span></p>
 <p>When we substitute A with <span class="math">\(\theta\)</span> and B with the data we get our bayesian formulation for the posterior distribution of the parameters given the observed data.</p>
-<p><span class="math">\[p(\theta| data) = \frac{p(data | \theta ) p (\theta)}{p(data)}\]</span></p>
-<p><span class="math">\(p(data | \theta)\)</span> is the likelihood and <span class="math">\(p(data)\)</span> is the probability of producing the given data (which is acting as a normalizing constant and generally is difficult to calculate). The expression can be simplified as:</p>
-<p><span class="math">\[p(\theta| data) \propto L(\theta | data ) p (\theta)\]</span></p>
-<p>The objective of Bayesian inference is to estimate the distribution of <span class="math">\(\theta\)</span> given the data. However, as you can see it takes a very complicated form it is not an easy problem. This is why we use methods like the Markov Chain Monte Carlo (MCMC) to generate “samples” that will represent the posterior distribution. The Metropolis-Hastings alogrithm is a widely used algorithm for this purpose.</p>
+<p><span class="math">\[ p(\theta| data) = \frac{p(data | \theta ) p (\theta)}{p(data)} \]</span></p>
+<p><span class="math">\(p(data | \theta)\)</span> is the likelihood and <span class="math">\(p(data)\)</span> is the probability of producing the data given all possible <span class="math">\(\theta\)</span> values , which is used as a normalizing constant and generally is difficult to calculate. <span class="math">\(p(\theta)\)</span> is the called the prior, and represents our belief (or initial guess) of how the parameters’ distribution. The expression can be simplified by ignoring the constant part as:</p>
+<p><span class="math">\[ p(\theta| data) \propto L(\theta | data ) p (\theta) \]</span></p>
+<p>The objective of Bayesian inference is to estimate the distribution of <span class="math">\(\theta\)</span> given the data. In other words, we are updating our belief about the parameters given the observed data as evidence. However, as you can see it takes a very complicated form which makes evaluating the posterior distribution a complicated problem. This is why we use methods like the Markov Chain Monte Carlo (MCMC) to generate “samples” that will represent the posterior distribution. The Metropolis-Hastings alogrithm is a widely used algorithm for this purpose.</p>
 <p>The intuition behind this is as follows:</p>
 <ul>
 <li><p>Although it is difficult to figure out the shape of the whole distribution, we can calculate point densities for the posterior distribution by setting a value for <span class="math">\(\theta\)</span>.</p></li>
-<li><p>You can generate point densities by using random <span class="math">\(\theta\)</span> values that “jump around”, and accept the value (or keep as a sample) depending on how likely the density is compared to the previous <span class="math">\(\theta\)</span>’s density.</p></li>
+<li><p>You can generate point densities by using random <span class="math">\(\theta\)</span> values that “jump around”, and accept the value (keep as a sample) depending on how likely the density is compared to the previous <span class="math">\(\theta\)</span>’s density. Simply put, <span class="math">\(\theta\)</span> values that have a relatively hight likelihood are going to be sampled a lot, and the ones with a relatively low likelihood will be discarded most of the times.</p></li>
 <li><p>Generate enough samples, and it will resemble the posterior distribution.</p></li>
 </ul>
 </div>

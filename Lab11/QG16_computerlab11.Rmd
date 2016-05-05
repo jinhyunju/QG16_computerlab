@@ -26,27 +26,27 @@ So far we have been dealing with parameter estimates that gave us an answer in t
 
 $$ L(\theta | data) \propto p(data | \theta) $$
 
-$$MLE(\hat{\theta}) = argmax_{\theta}(L(\theta | data)) $$
+$$ MLE(\hat{\theta}) = argmax_{\theta}(L(\theta | data)) $$
 
 The major difference between this and bayesian inference is that in bayesian inference we assume that there is a underlying "distribution" for our parameters not a single number. In order to estimate this distribution from a given sample, Bayes' theorem is used. 
 
-$$p(A | B) = \frac{p(B | A ) p (A)}{p(B)}$$
+$$ p(A | B) = \frac{p(B | A ) p (A)}{p(B)} $$
 
 When we substitute A with $\theta$ and B with the data we get our bayesian formulation for the posterior distribution of the parameters given the observed data. 
 
-$$p(\theta| data) = \frac{p(data | \theta ) p (\theta)}{p(data)}$$
+$$ p(\theta| data) = \frac{p(data | \theta ) p (\theta)}{p(data)} $$
 
-$p(data | \theta)$ is the likelihood and $p(data)$ is the probability of producing the given data (which is acting as a normalizing constant and generally is difficult to calculate). The expression can be simplified as:
+$p(data | \theta)$ is the likelihood and $p(data)$ is the probability of producing the data given all possible $\theta$ values , which is used as a normalizing constant and generally is difficult to calculate. $p(\theta)$ is the called the prior, and represents our belief (or initial guess) of how the parameters' distribution. The expression can be simplified by ignoring the constant part as:
 
-$$p(\theta| data) \propto L(\theta | data ) p (\theta)$$
+$$ p(\theta| data) \propto L(\theta | data ) p (\theta) $$
 
-The objective of Bayesian inference is to estimate the distribution of $\theta$ given the data. However, as you can see it takes a very complicated form it is not an easy problem. This is why we use methods like the Markov Chain Monte Carlo (MCMC) to generate "samples" that will represent the posterior distribution. The Metropolis-Hastings alogrithm is a widely used algorithm for this purpose. 
+The objective of Bayesian inference is to estimate the distribution of $\theta$ given the data. In other words, we are updating our belief about the parameters given the observed data as evidence. However, as you can see it takes a very complicated form which makes evaluating the posterior distribution a complicated problem. This is why we use methods like the Markov Chain Monte Carlo (MCMC) to generate "samples" that will represent the posterior distribution. The Metropolis-Hastings alogrithm is a widely used algorithm for this purpose. 
 
 The intuition behind this is as follows:
 
 + Although it is difficult to figure out the shape of the whole distribution, we can calculate point densities for the posterior distribution by setting a value for $\theta$.
 
-+ You can generate point densities by using random $\theta$ values that "jump around", and accept the value (or keep as a sample) depending on how likely the density is compared to the previous $\theta$'s density.
++ You can generate point densities by using random $\theta$ values that "jump around", and accept the value (keep as a sample) depending on how likely the density is compared to the previous $\theta$'s density. Simply put, $\theta$ values that have a relatively hight likelihood are going to be sampled a lot, and the ones with a relatively low likelihood will be discarded most of the times.
 
 + Generate enough samples, and it will resemble the posterior distribution.
 
