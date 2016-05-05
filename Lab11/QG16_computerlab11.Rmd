@@ -73,8 +73,6 @@ Y <- beta.mu + Xa * beta.a + rnorm(100,0,sd)
 # A visual check of the data is always a good practice to inlcude
 plot(Xa,Y, main="Xa vs Y")
 
-parameters <- c(beta.mu,beta.a,sd)
-
 ```
 
 So far everything seems familiar to us. Now we will have to set prior distributions on the parameters that we are interested in. For the sake of simplicity I chose a standard normal prior on $\beta_{\mu},\beta_a$ and an exponential prior on $\sigma_{epsilon}$. For the algorithm we only need the point densities of the parameters, so I am using `dnorm` and `dexp`. Since we usually deal with log likelihoods I also converted the densities to log scale by giving them the option `log = TRUE`.
@@ -82,6 +80,12 @@ So far everything seems familiar to us. Now we will have to set prior distributi
 **Question 1**
 
 + Why is a different prior more suitable for the standard deviation?
+
+```{r echo = FALSE, eval = FALSE}
+
+# because standard deviations should only take positive values. 
+
+```
 
 Also we need to calculate the likelihood in order to get to the posterior.The reason for using log densities in this case is because if we use the densities as they are it often happens that the numbers are getting too small and thus getting subject to numerical errors. 
 
@@ -130,7 +134,7 @@ The proposal function is takes care of the part where we "jump" around in the $\
 
 ```{r, comment = NA, fig.align='center'}
 proposal_func <- function(parameters){
-    proposal.output <- rnorm(3,mean = parameters, sd = c(0.1,0.1,0.1)) # why do we need an abs for the sd?
+    proposal.output <- rnorm(3,mean = parameters, sd = c(0.2,0.2,0.2)) # why do we need an abs for the sd?
     proposal.output[3] <- abs(proposal.output[3])
     return(proposal.output) 
 }
@@ -194,6 +198,16 @@ abline(h = sd, col="red" )
 + Do the results differ a lot when compared to a simple linear regression done by lm()?
 
 + When you look at the samples without a "burn-in" period what do you see?
+
+```{r echo = FALSE, eval = FALSE}
+
+# It shows a pretty good guess about the actual parameters
+
+# Should be pretty similar if you look at the mean of the posterior distribution
+
+# the burn-in period samples will not resemble the posterior distribution well, so taking them out is a good idea.
+
+```
 
 ***
 ### That's it for this semester's computer lab. 
